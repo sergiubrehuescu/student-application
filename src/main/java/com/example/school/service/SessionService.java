@@ -8,7 +8,11 @@ import com.example.school.repo.StudentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
+
+import static java.time.temporal.ChronoUnit.DAYS;
 
 @Service
 public class SessionService {
@@ -25,7 +29,7 @@ public class SessionService {
     public Session addSession(Session session, Integer id){
         Student student = studentService.findStudentById(id);
         student.getSessionList().add(session);
-        studentRepository.save(student);
+        //studentRepository.save(student); // will create 2 sessions with a mull ptr for student_id
         session.setStudent(student);// OK
         sessionRepository.save(session);
         return session;
@@ -37,7 +41,7 @@ public class SessionService {
         newSession.setStudent(session.getStudent());
         newSession.setDuration(session.getDuration());
         newSession.setLanguageProgramming(session.getLanguageProgramming());
-        newSession.setPaid(session.getPaid());
+        newSession.setPaid(session.isPaid());
         newSession.setLocalDate(session.getLocalDate());
         newSession.setPricePerHour(session.getPricePerHour());
         return sessionRepository.save(newSession);
@@ -57,8 +61,44 @@ public class SessionService {
         return session;
     }
 
+    public void paySession(Integer idSession) {
+        Session session = finSessionById(idSession);
+        session.setPaid(true);
+        sessionRepository.save(session);
+    }
 
+    public String addSessionsRecurent(Integer studentId,LocalDate localDate,Session session) {
+        int counter=0;
+        Student student = studentService.findStudentById(studentId);
+        LocalDate newDate = localDate;
+        long daysBetween = DAYS.between(localDate, localDate.plusMonths(3));
+        for (int i = 0; i < daysBetween; i+=7,counter++) {
+            newDate = newDate.plusDays(7);
+            Session newSession = new Session(session.getIdSession(),session.getLanguageProgramming(),session.getDuration(),session.getPricePerHour(),session.isPaid(),newDate,session.isRecurrent(),student);
+            addSession(newSession,studentId);
+        }
+        return ("Pentru " + student.getFirstName() + " " + student.getLastName() + " au fost adaugate " +counter + " sedinte noi din data " + localDate + " pana la data " + localDate.plusMonths(3));
+    }
 
+    public String statusHours(LocalDate localDateOne,LocalDate localDateTwo) {
+        List<Session> sessionList = sessionRepository.findAll();
+        double totalHours=0;
+        double totalHoursNext7Days=0;
+        for (Session session : sessionList) {
+            if (session.getLocalDate().isAfter(localDateOne) && session.getLocalDate().isBefore(localDateTwo)) {
+                totalHours += session.getDuration().floatValue()/60;
+            }
+        }
+        for (Session session : sessionList) {
+            if (session.getLocalDate().isAfter(localDateOne) && session.getLocalDate().isBefore(localDateOne.plusDays(7))) {
+                totalHoursNext7Days  = session.getDuration().floatValue() / 60;
+            }
+        }
+        System.out.println("TOTAL Hours intre data " + localDateOne + "si data " + localDateOne.plusDays(7) + "este de " + totalHoursNext7Days + " ore");
+
+        return ("TOTAL Hours intre data " + localDateOne + "si data " + localDateTwo + "este de " + totalHours + " ore");
+
+    }
 
 
 }

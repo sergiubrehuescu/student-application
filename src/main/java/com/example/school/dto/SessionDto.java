@@ -16,7 +16,8 @@ public class SessionDto {
     private Integer idSession;
     private String languageProgramming;
     private Integer duration;
-    private Integer pricePerHour =50;
-    private String paid;
+    private Integer pricePerHour;
+    private boolean paid;
     private LocalDate localDate;
+    private boolean recurrent;
 }
