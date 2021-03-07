@@ -25,6 +25,7 @@ import java.util.List;
 
 public class Student {
 
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
@@ -42,6 +43,10 @@ public class Student {
     private Gender gender;
     @MyCNP
     private String CNP;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "driving_license_id")
+    private DrivingLicense drivingLicense;
 
     //Sa se propage sesiunea in baza de date,
     @OneToMany(mappedBy = "student",cascade = CascadeType.ALL)

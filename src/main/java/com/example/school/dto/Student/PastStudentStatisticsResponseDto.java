@@ -1,4 +1,5 @@
-package com.example.school.model;
+package com.example.school.dto.Student;
+
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,9 +10,8 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class StudentsStatistics {
-
-    private Integer debts;
-    private Integer payed;
-    private Integer totalMonthIncome;
+public class PastStudentStatisticsDto {
+    int monthPayS;
+    int remainingPayS;
+    int payedS;
 }

@@ -1,5 +1,6 @@
 package com.example.school.model;
 
+import com.example.school.model.Student.Student;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
