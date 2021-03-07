@@ -1,4 +1,4 @@
-package com.example.school.annotations;
+package com.example.school.annotations.CNP;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
@@ -14,7 +14,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Target({METHOD, FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER, TYPE_USE})
 @Retention(RUNTIME)
 @Documented
-@Constraint(validatedBy = {CnpAnnotationImpl.class})
+@Constraint(validatedBy = {MyCNPAnnotationImpl.class})
 public @interface MyCNP {
 
     String message() default "Trebuie sa inceapa cu 1 sau 2 si exact 13 caractere";

@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class StudentsStatisticsDto {
+public class StudentsStatisticsResponseDto {
 
     private Integer debts;
     private Integer payed;

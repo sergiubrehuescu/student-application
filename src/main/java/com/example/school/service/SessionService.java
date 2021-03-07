@@ -1,8 +1,8 @@
 package com.example.school.service;
 
 import com.example.school.exception.ResourceNotFoundException;
-import com.example.school.model.Session;
-import com.example.school.model.Student;
+import com.example.school.model.Session.Session;
+import com.example.school.model.Student.Student;
 import com.example.school.repo.SessionRepository;
 import com.example.school.repo.StudentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,23 +61,22 @@ public class SessionService {
         return session;
     }
 
-    public void paySession(Integer idSession) {
+    public String paySession(Integer idSession) { //OK
         Session session = finSessionById(idSession);
         session.setPaid(true);
         sessionRepository.save(session);
+        return "Sesiunea cu id-ul " + idSession + " a fost platita !";
     }
 
-    public String addSessionsRecurent(Integer studentId,LocalDate localDate,Session session) {
+    public String addSessionsRecurent(Integer studentId,LocalDate localDate,Session session) {//OK
         int counter=0;
         Student student = studentService.findStudentById(studentId);
         LocalDate newDate = localDate;
-        long daysBetween = DAYS.between(localDate, localDate.plusMonths(3));
-        for (int i = 0; i < daysBetween; i+=7,counter++) {
-            newDate = newDate.plusDays(7);
-            Session newSession = new Session(session.getIdSession(),session.getLanguageProgramming(),session.getDuration(),session.getPricePerHour(),session.isPaid(),newDate,session.isRecurrent(),student);
+        for (int i = 0; i < DAYS.between(localDate, localDate.plusMonths(3)); i+=7,counter++) {
+            Session newSession = new Session(session.getIdSession(),session.getLanguageProgramming(),session.getDuration(),session.getPricePerHour(),session.isPaid(),newDate.plusDays(7),session.isRecurrent(),student);
             addSession(newSession,studentId);
         }
-        return ("Pentru " + student.getFirstName() + " " + student.getLastName() + " au fost adaugate " +counter + " sedinte noi din data " + localDate + " pana la data " + localDate.plusMonths(3));
+        return ("Pentru " + student.getStudentContactDetails().getFirstName()+ " " + student.getStudentContactDetails().getLastName() + " au fost adaugate " +counter + " sedinte noi din data " + localDate + " pana la data " + localDate.plusMonths(3));
     }
 
     public String statusHours(LocalDate localDateOne,LocalDate localDateTwo) {

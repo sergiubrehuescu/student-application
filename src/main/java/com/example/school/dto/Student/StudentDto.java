@@ -1,8 +1,9 @@
-package com.example.school.dto.StudentDto;
+package com.example.school.dto.Student;
 
-import com.example.school.dto.DrivingLicenseDto.DrivingLicenseDto;
-import com.example.school.dto.SessionDto.SessionDto;
+import com.example.school.dto.DrivingLicense.DrivingLicenseDto;
+import com.example.school.dto.Session.SessionDto;
 import com.example.school.enums.Gender;
+import com.example.school.model.Student.StudentContactDetails;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,23 +20,19 @@ import java.util.List;
 public class StudentDto {
 
     private Integer id;
-    private String firstName;
-    private String lastName;
+    private StudentContactDetails studentContactDetails;
     private Integer age;
     private LocalDate dateOfBirth;
-    private String email;
     private Gender gender;
     private DrivingLicenseDto drivingLicenseDto;
     private List<SessionDto> sessions =new ArrayList<SessionDto>();
 
 
-    public StudentDto(Integer id, String firstName, String lastName, Integer age, LocalDate dateOfBirth, String email, Gender gender) {
+    public StudentDto(Integer id, StudentContactDetails studentContactDetails, Integer age, LocalDate dateOfBirth, Gender gender) {
         this.id=id;
-        this.firstName=firstName;
-        this.lastName=lastName;
+        this.studentContactDetails=studentContactDetails;
         this.age=age;
         this.dateOfBirth=dateOfBirth;
-        this.email=email;
         this.gender=gender;
     }
 }

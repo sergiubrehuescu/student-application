@@ -1,5 +1,4 @@
-package com.example.school.dto.Student;
-
+package com.example.school.dto.Student.StatisticsOverAll;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -10,8 +9,8 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class PastStudentStatisticsResponseDto {
-    int monthPayS;
-    int remainingPayS;
-    int payedS;
+public class WeekHours {
+
+    String interval;
+    float hours=0;
 }

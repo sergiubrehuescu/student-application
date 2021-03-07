@@ -1,14 +1,14 @@
-package com.example.school.annotations.LastName;
+package com.example.school.annotations.PhoneNumber;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
-public class LastNameAnnotationImpl implements ConstraintValidator<LastName,String> {
+public class PhoneNumberAnnotationImpl implements ConstraintValidator<PhoneNumber,String> {
 
     @Override
-    public boolean isValid(String lastName, ConstraintValidatorContext constraintValidatorContext){
+    public boolean isValid(String phoneNumber, ConstraintValidatorContext constraintValidatorContext){
 
-        return lastName.length() > 7;
+        return phoneNumber.startsWith("07") && phoneNumber.length()==10;
 
     }
 }

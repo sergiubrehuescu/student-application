@@ -1,4 +1,4 @@
-package com.example.school.annotations;
+package com.example.school.annotations.LastName;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;

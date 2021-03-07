@@ -1,4 +1,4 @@
-package com.example.school.annotations.LastName;
+package com.example.school.annotations.PhoneNumber;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
@@ -12,10 +12,10 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Target({METHOD, FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER, TYPE_USE})
 @Retention(RUNTIME)
 @Documented
-@Constraint(validatedBy = {LastNameAnnotationImpl.class})
-public @interface LastName {
+@Constraint(validatedBy = {PhoneNumberAnnotationImpl.class})
+public @interface PhoneNumber {
 
-    String message() default "Trebuie sa contina cel putin 8 caractere";
+    String message() default "Trebuie sa inceapa cu 07 si sa aiba 10 cifre";
 
     Class<?>[] groups() default {};
 

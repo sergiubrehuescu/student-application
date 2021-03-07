@@ -1,4 +1,4 @@
-package com.example.school.annotations;
+package com.example.school.annotations.Email;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;

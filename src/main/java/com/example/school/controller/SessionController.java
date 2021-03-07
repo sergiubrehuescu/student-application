@@ -1,9 +1,9 @@
 package com.example.school.controller;
 
-import com.example.school.dto.SessionDto;
+import com.example.school.dto.Session.SessionDto;
 import com.example.school.mapper.SessionMapper;
 import com.example.school.mapper.StudentMapper;
-import com.example.school.model.Session;
+import com.example.school.model.Session.Session;
 import com.example.school.service.SessionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,8 +36,8 @@ public class SessionController {
     }
 
     @PutMapping("/paySession/{id}")
-    public void paySession(@PathVariable @Valid Integer id){
-        sessionService.paySession(id);
+    public String paySession(@PathVariable @Valid Integer id){
+        return sessionService.paySession(id);
     }
 
     @PutMapping("/statusHours/{localDateOne}/{localDateTwo}")

@@ -1,4 +1,4 @@
-package com.example.school.model;
+package com.example.school.model.Session;
 
 import com.example.school.model.Student.Student;
 import lombok.AllArgsConstructor;
