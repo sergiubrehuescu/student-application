@@ -40,10 +40,6 @@ public class SessionController {
         return sessionService.paySession(id);
     }
 
-    @PutMapping("/statusHours/{localDateOne}/{localDateTwo}")
-    public String statusHours(@PathVariable @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate localDateOne,@PathVariable @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate localDateTwo){
-        return sessionService.statusHours(localDateOne,localDateTwo);
-    }
 
     @PutMapping("addSessionsRecurent/{studentId}/{localDate}")
     public String addSessionsRecurent(@PathVariable Integer studentId, @PathVariable @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate localDate, @RequestBody Session session){

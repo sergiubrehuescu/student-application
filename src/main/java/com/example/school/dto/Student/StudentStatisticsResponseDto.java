@@ -10,7 +10,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class StudentStatisticsResponseDto {
-    // put in DTO
+
     int deptToday;
     int deptMonth;
     int monthPay;

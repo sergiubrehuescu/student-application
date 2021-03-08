@@ -5,11 +5,11 @@ import com.example.school.model.Session.Session;
 import com.example.school.model.Student.Student;
 import com.example.school.repo.SessionRepository;
 import com.example.school.repo.StudentRepository;
+import com.example.school.service.Student.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.List;
 import java.util.Optional;
 
 import static java.time.temporal.ChronoUnit.DAYS;
@@ -79,25 +79,6 @@ public class SessionService {
         return ("Pentru " + student.getStudentContactDetails().getFirstName()+ " " + student.getStudentContactDetails().getLastName() + " au fost adaugate " +counter + " sedinte noi din data " + localDate + " pana la data " + localDate.plusMonths(3));
     }
 
-    public String statusHours(LocalDate localDateOne,LocalDate localDateTwo) {
-        List<Session> sessionList = sessionRepository.findAll();
-        double totalHours=0;
-        double totalHoursNext7Days=0;
-        for (Session session : sessionList) {
-            if (session.getLocalDate().isAfter(localDateOne) && session.getLocalDate().isBefore(localDateTwo)) {
-                totalHours += session.getDuration().floatValue()/60;
-            }
-        }
-        for (Session session : sessionList) {
-            if (session.getLocalDate().isAfter(localDateOne) && session.getLocalDate().isBefore(localDateOne.plusDays(7))) {
-                totalHoursNext7Days  = session.getDuration().floatValue() / 60;
-            }
-        }
-        System.out.println("TOTAL Hours intre data " + localDateOne + "si data " + localDateOne.plusDays(7) + "este de " + totalHoursNext7Days + " ore");
-
-        return ("TOTAL Hours intre data " + localDateOne + "si data " + localDateTwo + "este de " + totalHours + " ore");
-
-    }
 
 
 }

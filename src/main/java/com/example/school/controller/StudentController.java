@@ -1,15 +1,13 @@
 package com.example.school.controller;
 
-import com.example.school.dto.DrivingLicense.DrivingLicenseDto;
 import com.example.school.dto.Session.SessionDto;
 import com.example.school.dto.Student.StudentDto;
-import com.example.school.mapper.DrivingLicenseMapper;
+import com.example.school.mapper.LiveStreamMapper;
 import com.example.school.mapper.SessionMapper;
 import com.example.school.mapper.StudentMapper;
-import com.example.school.model.DrivingLicense.DrivingLicense;
 import com.example.school.model.Session.Session;
 import com.example.school.model.Student.Student;
-import com.example.school.service.StudentService;
+import com.example.school.service.Student.StudentService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,18 +18,6 @@ import java.time.Month;
 import java.time.Year;
 import java.util.List;
 import java.util.stream.Collectors;
-
-/*LiveStream
-
-        data
-        limbaj_de_programare
-        topic
-        Lista participanti*/
-// One to Many // One to one //Many to Many //Validare @Anaotation //
-// Map Struct
-// Mapper
-// JPA Hibernate
-//
 
 @RestController
 public class StudentController {
@@ -46,7 +32,7 @@ public class StudentController {
     private SessionMapper sessionMapper;
 
     @Autowired
-    private DrivingLicenseMapper drivingLicenseMapper;
+    private LiveStreamMapper liveStreamMapper;
 
     private Logger logger = LoggerFactory.getLogger(StudentController.class);
 
@@ -85,16 +71,18 @@ public class StudentController {
         logger.info("Trecut prin controller");
         Student s = studentService.addStudent(student);
         StudentDto studentDto = studentMapper.mapToDto(s);
-        DrivingLicense drivingLicense = s.getDrivingLicense();
-        DrivingLicenseDto drivingLicenseDto = drivingLicenseMapper.mapToDto(drivingLicense);
-        studentDto.setDrivingLicenseDto(drivingLicenseDto);
         //pargur fiecare session din entity...map to sessiodnto...toate sessiondto intr-o lista goala de tip sessionDTO....setare acea lista goala pe noua lista din student DTO
         for (int i = 0; i < student.getSessionList().size(); i++) {
             Session session = student.getSessionList().get(i);
             SessionDto sessionDto= sessionMapper.mapToDto(session);
             studentDto.getSessions().add(sessionDto);
         }
-
+/*        List<LiveStreamDto> liveStreamDtos = student.getLiveStreamList()
+                .stream()
+                .map(liveStreamMapper::mapToLiveStreamDto)
+                .collect(Collectors.toList());
+//               .forEach(x -> personDto.getEvents().add(x));
+        studentDto.setLiveStreams(liveStreamDtos);*/
         return studentDto;
     }
 

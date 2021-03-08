@@ -2,7 +2,7 @@ package com.example.school.model.Student;
 
 import com.example.school.annotations.CNP.MyCNP;
 import com.example.school.enums.Gender;
-import com.example.school.model.DrivingLicense.DrivingLicense;
+import com.example.school.model.LiveStream;
 import com.example.school.model.Session.Session;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -26,10 +26,6 @@ public class Student {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "student_contact_details_id")
-    private StudentContactDetails studentContactDetails;
-
     private Integer age;
 
     private LocalDate dateOfBirth;
@@ -40,12 +36,19 @@ public class Student {
     private String CNP;
 
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "driving_license_id")
-    private DrivingLicense drivingLicense;
+    @JoinColumn(name = "student_contact_details_id")
+    private StudentContactDetails studentContactDetails;
 
     //Sa se propage sesiunea in baza de date,
     @OneToMany(mappedBy = "student",cascade = CascadeType.ALL)
     private List<Session> sessionList = new ArrayList<>();
+
+    @ManyToMany
+    @JoinTable(
+        name = "liveStream_students",
+        joinColumns = @JoinColumn(name = "student_id"),
+        inverseJoinColumns = @JoinColumn(name = "livestream_id"))
+    private List<LiveStream> liveStreamList = new ArrayList<>();
 
 }
 

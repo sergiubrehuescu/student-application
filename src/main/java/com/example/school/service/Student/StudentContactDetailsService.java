@@ -1,4 +1,4 @@
-package com.example.school.service;
+package com.example.school.service.Student;
 
 import com.example.school.exception.ResourceNotFoundException;
 import com.example.school.model.Student.StudentContactDetails;

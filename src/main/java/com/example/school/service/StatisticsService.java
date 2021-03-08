@@ -7,6 +7,7 @@ import com.example.school.dto.Student.StatisticsOverAll.WeekHours;
 import com.example.school.model.Session.Session;
 import com.example.school.repo.SessionRepository;
 import com.example.school.repo.StudentRepository;
+import com.example.school.service.Student.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -69,8 +70,8 @@ public class StatisticsService {
     public PastStudentStatisticsResponseDto studentStatisticsMonthYear(Integer studentId, Month month, Year year) {
         int monthPayS=0,remainingPayS=0,payedS=0;
         PastStudentStatisticsResponseDto pastStudentStatisticsResponseDto = new PastStudentStatisticsResponseDto();
-        List<SessionDto> sessionDtoListMonthPayS = studentService.remainingPayS(studentId,month,year);
-        List<SessionDto> sessionDtoListRemainingPayS = studentService.monthPayS(studentId,month,year);
+        List<SessionDto> sessionDtoListMonthPayS = studentService.monthPayS(studentId,month,year);
+        List<SessionDto> sessionDtoListRemainingPayS = studentService.remainingPayS(studentId,month,year);
         List<SessionDto> sessionDtoListPayedS = studentService.payedS(studentId,month,year);
 
         for (SessionDto sessionDto : sessionDtoListMonthPayS) {
@@ -134,17 +135,16 @@ public class StatisticsService {
         List<Session> sessionList = sessionRepository.findAll();
         StatisticsOverAllDto statisticsOverAllDto = new StatisticsOverAllDto();
         ArrayList<WeekHours> weekHours = new ArrayList<WeekHours>();
-
         float monthHOurs = 0;
         LocalDate start = LocalDate.of(year.getValue(), month.getValue(), 1);
         LocalDate end = LocalDate.of(year.getValue(), month.getValue(), month.length(((year.getValue() % 4 == 0) && (year.getValue() % 100 != 0)) || (year.getValue() % 400 == 0)));
         Integer[] dayOfWeeks = {start.plusWeeks(0).getDayOfWeek().getValue(), start.plusWeeks(1).getDayOfWeek().getValue(), start.plusWeeks(2).getDayOfWeek().getValue(), start.plusWeeks(3).getDayOfWeek().getValue(),start.plusWeeks(4).getDayOfWeek().getValue()};
         System.out.println(start.getDayOfWeek());
-        weekHours.add(new WeekHours(start.plusWeeks(0).toString()+start.getDayOfWeek().getValue(), 0));
-        weekHours.add(new WeekHours(start.plusWeeks(1).toString()+start.plusDays(13), 0));
-        weekHours.add(new WeekHours(start.plusWeeks(2).toString()+start.plusDays(20), 0));
-        weekHours.add(new WeekHours(start.plusWeeks(3).toString()+start.plusDays(27), 0));
-        weekHours.add(new WeekHours(start.plusWeeks(4).toString()+end, 0));
+        weekHours.add(new WeekHours(start.plusWeeks(0).toString()+ " " + start.plusDays(6), 0));
+        weekHours.add(new WeekHours(start.plusWeeks(1).toString()+ " " + start.plusDays(13), 0));
+        weekHours.add(new WeekHours(start.plusWeeks(2).toString()+ " " + start.plusDays(20), 0));
+        weekHours.add(new WeekHours(start.plusWeeks(3).toString()+ " " + start.plusDays(27), 0));
+        weekHours.add(new WeekHours(start.plusWeeks(4).toString()+ " " + end, 0));
         for (Session session : sessionList) {
             if (session.getLocalDate().getMonth().equals(month) && session.getLocalDate().getYear() == year.getValue()) {
                 monthHOurs += (float) session.getDuration() / 60;

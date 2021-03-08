@@ -1,6 +1,6 @@
 package com.example.school.dto.Student;
 
-import com.example.school.dto.DrivingLicense.DrivingLicenseDto;
+import com.example.school.dto.LiveStream.LiveStreamDto;
 import com.example.school.dto.Session.SessionDto;
 import com.example.school.enums.Gender;
 import com.example.school.model.Student.StudentContactDetails;
@@ -24,8 +24,8 @@ public class StudentDto {
     private Integer age;
     private LocalDate dateOfBirth;
     private Gender gender;
-    private DrivingLicenseDto drivingLicenseDto;
     private List<SessionDto> sessions =new ArrayList<SessionDto>();
+    private List<LiveStreamDto> liveStreams = new ArrayList<>();
 
 
     public StudentDto(Integer id, StudentContactDetails studentContactDetails, Integer age, LocalDate dateOfBirth, Gender gender) {

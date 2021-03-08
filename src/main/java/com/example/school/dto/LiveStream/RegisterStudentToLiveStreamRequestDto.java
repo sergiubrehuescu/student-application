@@ -1,5 +1,4 @@
-package com.example.school.dto.Student;
-
+package com.example.school.dto.LiveStream;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -10,9 +9,8 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class PastStudentStatisticsResponseDto {
+public class RegisterStudentToLiveStreamRequestDto {
 
-    int monthPayS;
-    int remainingPayS;
-    int payedS;
+    private int studentId;
+    private int liveStreamId;
 }
