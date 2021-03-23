@@ -5,7 +5,6 @@ import com.example.school.exception.ResourceNotFoundException;
 import com.example.school.mapper.SessionMapper;
 import com.example.school.model.Session.Session;
 import com.example.school.model.Student.Student;
-import com.example.school.repo.LiveStreamRepository;
 import com.example.school.repo.SessionRepository;
 import com.example.school.repo.StudentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,16 +30,12 @@ public class StudentService {
     @Autowired
     private SessionRepository sessionRepository;
 
-    @Autowired
-    private LiveStreamRepository liveStreamRepository;
-
     public Student addStudent(Student student){
         sessionRepository.saveAll(student.getSessionList());
         for (int i = 0; i < student.getSessionList().size(); i++) {
             student.getSessionList().get(i).setStudent(student);
         }
-        studentRepository.save(student);
-        return student;
+        return studentRepository.save(student);
     }
 
     public Student findStudentById(Integer id){
@@ -59,13 +54,8 @@ public class StudentService {
 
     public Student updateStudent(Student student){
         Student newStudent =findStudentById(student.getId());
-        List<Session> sessionList = sessionRepository.findAll();
-        newStudent.setAge(student.getAge());
-        newStudent.setDateOfBirth(student.getDateOfBirth());
-        newStudent.getStudentContactDetails().setEmail(student.getStudentContactDetails().getEmail());
-        newStudent.getStudentContactDetails().setFirstName(student.getStudentContactDetails().getFirstName());
-        newStudent.getStudentContactDetails().setLastName(student.getStudentContactDetails().getLastName());
-        newStudent.setGender(student.getGender());
+        //List<Session> sessionList = sessionRepository.findAll(); //todo do i need sessionList here ?
+        updateStudentInfo(student, newStudent);
         return studentRepository.save(newStudent);
     }
 
@@ -73,126 +63,148 @@ public class StudentService {
         return studentRepository.findAll();
     }
 
-    public List<SessionDto> paidSessions(Integer studentId) { //todo OK OK OK OK OK OK//todo OK OK OK OK OK OK
-        List<Session> sessionList = sessionRepository.findAll();
+    public List<SessionDto> getPaidSessions(Integer studentId){
+        Student student=findStudentById(studentId);
+        List<Session> sessionList = student.getSessionList(); //todo can it be refactored ?
         List<Session> paidSessions = sessionList.stream()
-                .filter(session -> session.getStudent().getId().equals(studentId) && session.getLocalDate().getMonth().equals(LocalDate.now().getMonth()) && session.isPaid())
+                .filter(session -> session.getLocalDate().getMonth().equals(LocalDate.now().getMonth()))
+                .filter(Session::isPaid)
                 .collect(Collectors.toList());
         return sessionMapper.mapToDtoList(paidSessions);
     }
 
-    public List<SessionDto> notPaidSessionsMonthYear(Integer studentId, Month month, Year year) { //todo OK OK OK OK OK OK//todo OK OK OK OK OK OK
-        List<Session> sessionList = sessionRepository.findAll();
+    public List<SessionDto> getNotPaidSessionsMonthYear(Integer studentId, Month month, Year year) {
+        Student student = studentRepository.findById(studentId).orElseThrow(()-> new ResourceNotFoundException("Student wit id " + studentId + "was not found"));
+        List<Session> sessionList = student.getSessionList();
         List<Session> notPaidSessionsMonthYear = sessionList.stream()
-                .filter(session -> session.getStudent().getId().equals(studentId) && session.getLocalDate().getMonth().equals(month) && (session.getLocalDate().getYear()==year.getValue()))
+                .filter(session -> session.getLocalDate().getMonth().equals(month))
+                .filter(session -> session.getLocalDate().getYear()==year.getValue())
                 .filter(session -> !session.isPaid())
                 .collect(Collectors.toList());
         return sessionMapper.mapToDtoList(notPaidSessionsMonthYear);
     }
 
-    public List<SessionDto> paidSessionsMonthYear(Integer studentId, Month month, Year year) { //todo OK OK OK OK OK OK//todo OK OK OK OK OK OK
-        List<Session> sessionList = sessionRepository.findAll();
+    public List<SessionDto> getPaidSessionsMonthYear(Integer studentId, Month month, Year year) {
+        Student student = studentRepository.findById(studentId).orElseThrow(()-> new ResourceNotFoundException("Student wit id " + studentId + "was not found"));
+        List<Session> sessionList = student.getSessionList();
         List<Session> paidSessionsMonthYear = sessionList.stream()
-                .filter(session -> session.getStudent().getId().equals(studentId) && session.getLocalDate().getMonth().equals(month) && (session.getLocalDate().getYear()==year.getValue()))
+                .filter(session -> session.getLocalDate().getMonth().equals(month))
+                .filter(session -> session.getLocalDate().getYear()==year.getValue())
                 .filter(Session::isPaid)
                 .collect(Collectors.toList());
         return sessionMapper.mapToDtoList(paidSessionsMonthYear);
     }
 
-    public List<SessionDto> deptToday(Integer studentId) { //todo OK OK OK OK OK OK//todo OK OK OK OK OK OK
-        List<Session> sessionList = sessionRepository.findAll();
+    public List<SessionDto> deptToday(Integer studentId) {
+        //todo REFACTORING !!!!!!!
+        Student student = studentRepository.findById(studentId).orElseThrow(()-> new ResourceNotFoundException("Student wit id " + studentId + "was not found"));
+        List<Session> sessionList = student.getSessionList();
         Function<Session, SessionDto> mapToDto = sessionMapper::mapToDto; //interfata functionala care primeste un parametru si il transpofrma in altceva
         return   sessionList.stream()
-                .filter(session -> session.getStudent().getId().equals(studentId) && session.getLocalDate().isBefore(LocalDate.now()) && session.getLocalDate().getMonth().equals(LocalDate.now().getMonth())&& !session.isPaid())
+                .filter(session -> session.getLocalDate().isBefore(LocalDate.now()))
+                .filter(session -> session.getLocalDate().getMonth().equals(LocalDate.now().getMonth()))
+                .filter(session -> !session.isPaid())
                 .map(mapToDto) // .map(session -> sessionMapper.mapToDto(session))
                 .collect(Collectors.toList());
     }
 
-    public List<SessionDto> deptMonth(Integer studentId) {//todo OK OK OK OK OK OK//todo OK OK OK OK OK OK
-        List<Session> sessionList = sessionRepository.findAll();
+    public List<SessionDto> deptMonth(Integer studentId) {
+        Student student = studentRepository.findById(studentId).orElseThrow(()-> new ResourceNotFoundException("Student wit id " + studentId + "was not found"));
+        List<Session> sessionList = student.getSessionList();
         List<Session> deptMonth = sessionList.stream()
-                .filter(session -> session.getStudent().getId().equals(studentId) && session.getLocalDate().isAfter(LocalDate.now()) && session.getLocalDate().getMonth().equals(LocalDate.now().getMonth()) )
+                .filter(session -> session.getLocalDate().isAfter(LocalDate.now()))
+                .filter(session -> session.getLocalDate().getMonth().equals(LocalDate.now().getMonth()))
                 .filter(session -> !session.isPaid())
                 .collect(Collectors.toList());
         return sessionMapper.mapToDtoList(deptMonth);
     }
 
-    public List<SessionDto> monthPay(Integer studentId) {//todo OK OK OK OK OK OK//todo OK OK OK OK OK OK
-        List<Session> sessionList = sessionRepository.findAll();
+    public List<SessionDto> monthPay(Integer studentId) {
+        Student student = studentRepository.findById(studentId).orElseThrow(()-> new ResourceNotFoundException("Student wit id " + studentId + "was not found"));
+        List<Session> sessionList = student.getSessionList();
         List<Session> monthPay = sessionList.stream()
-                .filter(session -> session.getStudent().getId().equals(studentId))
                 .filter(session -> session.getLocalDate().getMonth().equals(LocalDate.now().getMonth()))
                 .collect(Collectors.toList());
         return sessionMapper.mapToDtoList(monthPay);
     }
 
-    public List<SessionDto> remainingPay(Integer studentId) {//todo OK OK OK OK OK OK//todo OK OK OK OK OK OK
-        List<Session> sessionList = sessionRepository.findAll();
+    public List<SessionDto> remainingPay(Integer studentId) {
+        Student student = studentRepository.findById(studentId).orElseThrow(()-> new ResourceNotFoundException("Student wit id " + studentId + "was not found"));
+        List<Session> sessionList = student.getSessionList();
         List<Session> remainingPay = sessionList.stream()
-                .filter(session -> session.getStudent().getId().equals(studentId) && session.getLocalDate().getMonth().equals(LocalDate.now().getMonth()))
+                .filter(session -> session.getLocalDate().getMonth().equals(LocalDate.now().getMonth()))
                 .filter(session -> !session.isPaid())
                 .collect(Collectors.toList());
         return sessionMapper.mapToDtoList(remainingPay);
     }
 
-    public List<SessionDto> payed(Integer studentId) {//todo OK OK OK OK OK OK//todo OK OK OK OK OK OK
-        List<Session> sessionList = sessionRepository.findAll();
+    public List<SessionDto> payed(Integer studentId) {
+        Student student = studentRepository.findById(studentId).orElseThrow(()-> new ResourceNotFoundException("Student wit id " + studentId + "was not found"));
+        List<Session> sessionList = student.getSessionList();
         List<Session> payed = sessionList.stream()
-                .filter(session -> session.getStudent().getId().equals(studentId) && session.getLocalDate().now().getMonth().equals(LocalDate.now().getMonth()))
+                .filter(session -> session.getLocalDate().now().getMonth().equals(LocalDate.now().getMonth()))
                 .filter(Session::isPaid)
                 .collect(Collectors.toList());
         return sessionMapper.mapToDtoList(payed);
     }
 
-    public List<SessionDto> remainingPayS(Integer studentId, Month month, Year year) {//todo OK OK OK OK OK OK//todo OK OK OK OK OK OK
-        List<Session> sessionList = sessionRepository.findAll();
+    public List<SessionDto> remainingPayS(Integer studentId, Month month, Year year) {
+        Student student = studentRepository.findById(studentId).orElseThrow(()-> new ResourceNotFoundException("Student wit id " + studentId + "was not found"));
+        List<Session> sessionList = student.getSessionList();
         List<Session> remainingPayS = sessionList.stream()
-                .filter(session -> session.getStudent().getId().equals(studentId) && session.getLocalDate().getMonth().equals(month))
+                .filter(session -> session.getLocalDate().getMonth().equals(month))
                 .filter(session -> session.getLocalDate().getYear()==year.getValue())
                 .filter(session -> !session.isPaid())
                 .collect(Collectors.toList());
         return sessionMapper.mapToDtoList(remainingPayS);
     }
 
-    public List<SessionDto> monthPayS(Integer studentId, Month month,Year year) {//todo OK OK OK OK OK OK//todo OK OK OK OK OK OK
-        List<Session> sessionList = sessionRepository.findAll();
+    public List<SessionDto> monthPayS(Integer studentId, Month month,Year year) {
+        Student student = studentRepository.findById(studentId).orElseThrow(()-> new ResourceNotFoundException("Student wit id " + studentId + "was not found"));
+        List<Session> sessionList = student.getSessionList();
         List<Session> monthPayS = sessionList.stream()
-                .filter(session -> session.getStudent().getId().equals(studentId) && session.getLocalDate().getMonth().equals(month) && session.getLocalDate().getYear()==year.getValue())
+                .filter(session -> session.getLocalDate().getMonth().equals(month))
+                .filter(session -> session.getLocalDate().getYear()==year.getValue())
                 .collect(Collectors.toList());
         return sessionMapper.mapToDtoList(monthPayS);
     }
 
-    public List<SessionDto> payedS(Integer studentId, Month month, Year year) {//todo OK OK OK OK OK OK//todo OK OK OK OK OK OK
+    public List<SessionDto> payedS(Integer studentId, Month month, Year year) {
         List<Session> sessionList = sessionRepository.findAll();
         List<Session> payedS = sessionList.stream()
-                .filter(session -> session.getStudent().getId().equals(studentId) && session.getLocalDate().getMonth().equals(month) && session.getLocalDate().getYear()==year.getValue())
+                .filter(session -> session.getStudent().getId().equals(studentId))
+                .filter(session -> session.getLocalDate().getMonth().equals(month))
+                .filter(session -> session.getLocalDate().getYear()==year.getValue())
                 .filter(session -> session.isPaid())
                 .collect(Collectors.toList());
         return sessionMapper.mapToDtoList(payedS);
     }
 
-    public List<SessionDto> studentsDebtsTotal() {//todo OK OK OK OK OK OK//todo OK OK OK OK OK OK
+    public List<SessionDto> studentsDebtsTotal() {
         List<Session> sessionList =sessionRepository.findAll();
         List<Session> debtsTotal = sessionList.stream()
-                .filter(session -> session.getLocalDate().getMonth().equals(LocalDate.now().getMonth()) || session.getLocalDate().isBefore(LocalDate.now()))
+                .filter(session -> session.getLocalDate().getMonth().equals(LocalDate.now().getMonth()))
+                .filter(session -> session.getLocalDate().isBefore(LocalDate.now()))
                 .filter(session -> !session.isPaid())
                 .collect(Collectors.toList());
         return sessionMapper.mapToDtoList(debtsTotal);
     }
 
-    public List<SessionDto> studentsPayedTotal() {//todo OK OK OK OK OK OK//todo OK OK OK OK OK OK
+    public List<SessionDto> studentsPayedTotal() {
         List<Session> sessionList =sessionRepository.findAll();
         List<Session> payedTotal = sessionList.stream()
-                .filter(session -> session.getLocalDate().getMonth().equals(LocalDate.now().getMonth()) || session.getLocalDate().isBefore(LocalDate.now()))
+                .filter(session -> session.getLocalDate().getMonth().equals(LocalDate.now().getMonth()))
+                .filter(session -> session.getLocalDate().isBefore(LocalDate.now()))
                 .filter(session -> session.isPaid())
                 .collect(Collectors.toList());
         return sessionMapper.mapToDtoList(payedTotal);
     }
 
-    public List<SessionDto> studentsMonthIncomeTotal() {//todo OK OK OK OK OK OK//todo OK OK OK OK OK OK
+    public List<SessionDto> studentsMonthIncomeTotal() {
         List<Session> sessionList =sessionRepository.findAll();
         List<Session> totalMonthIncome = sessionList.stream()
-                .filter(session -> session.getLocalDate().getMonth().equals(LocalDate.now().getMonth()) || session.getLocalDate().isBefore(LocalDate.now()))
+                .filter(session -> session.getLocalDate().getMonth().equals(LocalDate.now().getMonth()))
+                .filter(session -> session.getLocalDate().isBefore(LocalDate.now()))
                 .collect(Collectors.toList());
         return sessionMapper.mapToDtoList(totalMonthIncome);
     }
@@ -200,7 +212,8 @@ public class StudentService {
     public List<SessionDto> studentsDebtsTotaMonth(Month month,Year year) {
         List<Session> sessionList =sessionRepository.findAll();
         List<Session> debtsTotalMonth = sessionList.stream()
-                .filter(session -> session.getLocalDate().getMonth().equals(month) && session.getLocalDate().getYear()==year.getValue())
+                .filter(session -> session.getLocalDate().getMonth().equals(month))
+                .filter(session -> session.getLocalDate().getYear()==year.getValue())
                 .filter(session -> !session.isPaid())
                 .collect(Collectors.toList());
         return sessionMapper.mapToDtoList(debtsTotalMonth);
@@ -209,7 +222,8 @@ public class StudentService {
     public List<SessionDto> studentsPayedTotalMonth(Month month,Year year) {
         List<Session> sessionList =sessionRepository.findAll();
         List<Session> payedTotalMonth = sessionList.stream()
-                .filter(session -> session.getLocalDate().getMonth().equals(month)&& session.getLocalDate().getYear()==year.getValue())
+                .filter(session -> session.getLocalDate().getMonth().equals(month))
+                .filter(session -> session.getLocalDate().getYear()==year.getValue())
                 .filter(session -> session.isPaid())
                 .collect(Collectors.toList());
         return sessionMapper.mapToDtoList(payedTotalMonth);
@@ -218,9 +232,19 @@ public class StudentService {
     public List<SessionDto> studentsMonthIncomeTotalMonth(Month month,Year year) {
         List<Session> sessionList =sessionRepository.findAll();
         List<Session> monthIncomeTotalMonth = sessionList.stream()
-                .filter(session -> session.getLocalDate().getMonth().equals(month)&& session.getLocalDate().getYear()==year.getValue())
+                .filter(session -> session.getLocalDate().getMonth().equals(month))
+                .filter(session -> session.getLocalDate().getYear()==year.getValue())
                 .collect(Collectors.toList());
         return sessionMapper.mapToDtoList(monthIncomeTotalMonth);
+    }
+
+    private void updateStudentInfo(Student student, Student newStudent) {
+        newStudent.setAge(student.getAge());
+        newStudent.setDateOfBirth(student.getDateOfBirth());
+        newStudent.getStudentContactDetails().setEmail(student.getStudentContactDetails().getEmail());
+        newStudent.getStudentContactDetails().setFirstName(student.getStudentContactDetails().getFirstName());
+        newStudent.getStudentContactDetails().setLastName(student.getStudentContactDetails().getLastName());
+        newStudent.setGender(student.getGender());
     }
 
 

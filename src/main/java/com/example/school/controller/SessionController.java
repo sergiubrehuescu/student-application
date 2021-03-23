@@ -2,7 +2,6 @@ package com.example.school.controller;
 
 import com.example.school.dto.Session.SessionDto;
 import com.example.school.mapper.SessionMapper;
-import com.example.school.mapper.StudentMapper;
 import com.example.school.model.Session.Session;
 import com.example.school.service.SessionService;
 import org.slf4j.Logger;
@@ -15,6 +14,7 @@ import javax.validation.Valid;
 import java.time.LocalDate;
 
 @RestController
+@RequestMapping("session")
 public class SessionController {
 
     @Autowired
@@ -23,40 +23,40 @@ public class SessionController {
     @Autowired
     private SessionService sessionService;
 
-    @Autowired
-    private StudentMapper studentMapper;
-
     private Logger logger = LoggerFactory.getLogger(SessionController.class);
 
-    @PostMapping("addSessionToStudent/{id}")
+    @PostMapping("addToStudent/{id}")
     private SessionDto addSessionToStudent(@PathVariable Integer id , @RequestBody Session session)
     {
         sessionService.addSession(session,id);
         return sessionMapper.mapToDto(session);
     }
 
-    @PutMapping("/paySession/{id}")
-    public String paySession(@PathVariable @Valid Integer id){
-        return sessionService.paySession(id);
-    }
-
-
-    @PutMapping("addSessionsRecurent/{studentId}/{localDate}")
-    public String addSessionsRecurent(@PathVariable Integer studentId, @PathVariable @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate localDate, @RequestBody Session session){
-        return sessionService.addSessionsRecurent(studentId,localDate,session);
-    }
-
-    @PutMapping("/updateSession")
-    public SessionDto updateSession(@RequestBody @Valid Session session){
-        sessionService.updateSession(session);
-        return sessionMapper.mapToDto(session);
-    }
-
-    @DeleteMapping("/removeSession/{idSession}")
+    @DeleteMapping("remove/{idSession}")
     public SessionDto removeSession(@PathVariable Integer idSession){
         Session session = sessionService.finSessionById(idSession);
         sessionService.removeSession(idSession);
         return sessionMapper.mapToDto(session);
     }
+
+    @PutMapping("update")
+    public SessionDto updateSession(@RequestBody @Valid Session session){
+        sessionService.updateSession(session);
+        return sessionMapper.mapToDto(session);
+    }
+
+    @PutMapping("pay/{id}")
+    public String paySession(@PathVariable @Valid Integer id){
+        return sessionService.paySession(id);
+    }
+
+
+    @PutMapping("addRecurent/{studentId}/{localDate}")
+    public String addSessionsRecurent(@PathVariable Integer studentId, @PathVariable @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate localDate, @RequestBody Session session){
+        return sessionService.addSessionsRecurent(studentId,localDate,session);
+    }
+
+
+
 
 }

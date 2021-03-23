@@ -2,7 +2,7 @@ package com.example.school.model.Student;
 
 import com.example.school.annotations.CNP.MyCNP;
 import com.example.school.enums.Gender;
-import com.example.school.model.LiveStream;
+import com.example.school.model.LiveStream.LiveStream;
 import com.example.school.model.Session.Session;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -37,7 +37,7 @@ public class Student {
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "student_contact_details_id")
-    private StudentContactDetails studentContactDetails;
+    private StudentContactDetails studentContactDetails= new StudentContactDetails();
 
     //Sa se propage sesiunea in baza de date,
     @OneToMany(mappedBy = "student",cascade = CascadeType.ALL)

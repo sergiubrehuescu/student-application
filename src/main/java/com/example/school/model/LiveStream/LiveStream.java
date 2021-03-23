@@ -1,4 +1,4 @@
-package com.example.school.model;
+package com.example.school.model.LiveStream;
 
 import com.example.school.enums.LanguageType;
 import com.example.school.model.Student.Student;
@@ -25,7 +25,8 @@ public class LiveStream {
     private int id;
 
     private String location;
-    private LocalDate createdAt=LocalDate.now();
+    private LocalDate createdAt=LocalDate.now(); //todo tema live stream , date , expires at()
+    //todo with entity
     private LanguageType languageType;
 
     @ManyToMany(mappedBy = "liveStreamList")

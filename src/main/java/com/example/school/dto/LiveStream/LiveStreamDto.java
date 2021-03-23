@@ -1,7 +1,7 @@
 package com.example.school.dto.LiveStream;
 
+import com.example.school.dto.Student.StudentDto;
 import com.example.school.enums.LanguageType;
-import com.example.school.model.Student.Student;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,7 +21,7 @@ public class LiveStreamDto {
     private String location;
     private LocalDate createdAt;
     private LanguageType languageType;
-    List<Student> studentList = new ArrayList<>();
+    private List<StudentDto> studentList = new ArrayList<>(); //todo StudentDto
 
     public LiveStreamDto(String location, LocalDate createdAt, LanguageType languageType) {
         this.location = location;

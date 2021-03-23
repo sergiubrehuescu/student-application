@@ -1,4 +1,4 @@
-package com.example.school.dto.Student.StatisticsOverAll;
+package com.example.school.dto.StatisticsOverAll;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -11,6 +11,6 @@ import lombok.Setter;
 @NoArgsConstructor
 public class WeekHours {
 
-    String interval;
+    String interval; //todo 2 Local dates
     float hours=0;
 }

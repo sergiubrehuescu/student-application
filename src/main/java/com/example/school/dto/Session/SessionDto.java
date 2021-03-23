@@ -20,4 +20,6 @@ public class SessionDto {
     private boolean paid;
     private LocalDate localDate;
     private boolean recurrent;
+    //todo Si studentul in body
+    //todo profesor
 }

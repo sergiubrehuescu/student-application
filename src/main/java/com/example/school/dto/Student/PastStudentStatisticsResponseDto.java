@@ -12,7 +12,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public class PastStudentStatisticsResponseDto {
 
-    int monthPayS;
-    int remainingPayS;
-    int payedS;
+    int monthPay;
+    int remainingPay;
+    int payed;
 }

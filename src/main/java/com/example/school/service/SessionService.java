@@ -37,13 +37,7 @@ public class SessionService {
 
     public Session updateSession(Session session) {
         Session newSession = finSessionById(session.getIdSession());
-        newSession.setIdSession(session.getIdSession());
-        newSession.setStudent(session.getStudent());
-        newSession.setDuration(session.getDuration());
-        newSession.setLanguageProgramming(session.getLanguageProgramming());
-        newSession.setPaid(session.isPaid());
-        newSession.setLocalDate(session.getLocalDate());
-        newSession.setPricePerHour(session.getPricePerHour());
+        updateSessionInfo(session, newSession);
         return sessionRepository.save(newSession);
     }
 
@@ -69,14 +63,27 @@ public class SessionService {
     }
 
     public String addSessionsRecurent(Integer studentId,LocalDate localDate,Session session) {//OK
+        //todo refactoring with stream API
         int counter=0;
         Student student = studentService.findStudentById(studentId);
         LocalDate newDate = localDate;
         for (int i = 0; i < DAYS.between(localDate, localDate.plusMonths(3)); i+=7,counter++) {
+
             Session newSession = new Session(session.getIdSession(),session.getLanguageProgramming(),session.getDuration(),session.getPricePerHour(),session.isPaid(),newDate.plusDays(7),session.isRecurrent(),student);
             addSession(newSession,studentId);
         }
         return ("Pentru " + student.getStudentContactDetails().getFirstName()+ " " + student.getStudentContactDetails().getLastName() + " au fost adaugate " +counter + " sedinte noi din data " + localDate + " pana la data " + localDate.plusMonths(3));
+    }
+
+
+    private void updateSessionInfo(Session session, Session newSession) {
+        newSession.setIdSession(session.getIdSession());
+        newSession.setStudent(session.getStudent());
+        newSession.setDuration(session.getDuration());
+        newSession.setLanguageProgramming(session.getLanguageProgramming());
+        newSession.setPaid(session.isPaid());
+        newSession.setLocalDate(session.getLocalDate());
+        newSession.setPricePerHour(session.getPricePerHour());
     }
 
 

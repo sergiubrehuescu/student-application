@@ -13,6 +13,6 @@ import lombok.Setter;
 public class UpdateLiveStreamRequestDto {
 
     private String location;
-    private LanguageType languageType;
+    private LanguageType languageType; // date //topic
 
 }

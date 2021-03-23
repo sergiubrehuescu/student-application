@@ -1,4 +1,4 @@
-package com.example.school.dto.Student.StatisticsOverAll;
+package com.example.school.dto.StatisticsOverAll;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

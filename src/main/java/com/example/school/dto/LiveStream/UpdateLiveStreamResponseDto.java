@@ -13,6 +13,6 @@ import lombok.Setter;
 public class UpdateLiveStreamResponseDto {
 
     private String location;
-    private LanguageType languageType;
+    private LanguageType languageType; // si id //
 
 }

@@ -1,20 +1,15 @@
 package com.example.school.service;
 
 import com.example.school.dto.Session.SessionDto;
-import com.example.school.dto.Student.*;
-import com.example.school.dto.Student.StatisticsOverAll.StatisticsOverAllDto;
-import com.example.school.dto.Student.StatisticsOverAll.WeekHours;
-import com.example.school.model.Session.Session;
-import com.example.school.repo.SessionRepository;
-import com.example.school.repo.StudentRepository;
+import com.example.school.dto.Student.PastStudentStatisticsResponseDto;
+import com.example.school.dto.Student.StudentStatisticsResponseDto;
+import com.example.school.dto.Student.StudentsStatisticsResponseDto;
 import com.example.school.service.Student.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.time.Month;
 import java.time.Year;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -22,16 +17,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class StatisticsService {
 
     @Autowired
-    private StudentRepository studentRepository;
-
-    @Autowired
     private StudentService studentService;
-
-    @Autowired
-    private SessionRepository sessionRepository;
-
-
-
 
     public StudentStatisticsResponseDto studentStatistics(Integer studentId) {
         AtomicInteger deptToday= new AtomicInteger(); //int nu poate fi folosit in forEach
@@ -46,7 +32,7 @@ public class StatisticsService {
         List<SessionDto> sessionDtoRemainingPay = studentService.remainingPay(studentId);
         List<SessionDto> sessionDtoListPayed = studentService.payed(studentId);
 
-        sessionDtoListDeptToday.forEach(x-> deptToday.addAndGet(getPayedSession(x)));
+        sessionDtoListDeptToday.forEach(x-> deptToday.addAndGet(getPayedSession(x))); //nu poti folosi un int/Integer in forEach
 
         deptMonth += sessionDtoListDeptMonth.stream().mapToInt(this::getPayedSession).sum();
 
@@ -63,7 +49,6 @@ public class StatisticsService {
         }
 
         setPayment(deptToday.get(), deptMonth, monthPay, remainingPay, payed, studentStatisticsResponseDto);
-
         return studentStatisticsResponseDto;
     }
 
@@ -85,11 +70,11 @@ public class StatisticsService {
         }
 
         setPaymentS(monthPayS, remainingPayS, payedS, pastStudentStatisticsResponseDto);
-
         return pastStudentStatisticsResponseDto;
     }
 
     public StudentsStatisticsResponseDto studentsStatistics() {
+        //todo REFACTORING !!!!
         int debts=0,payed=0,income=0;
         StudentsStatisticsResponseDto studentsStatisticsResponseDto = new StudentsStatisticsResponseDto();
         List<SessionDto> debtsTotal = studentService.studentsDebtsTotal();
@@ -106,7 +91,6 @@ public class StatisticsService {
             income += getPayedSession(sessionDto);
         }
         setPaymentAllStudents(debts, payed, income, studentsStatisticsResponseDto);
-
         return studentsStatisticsResponseDto;
     }
 
@@ -127,11 +111,34 @@ public class StatisticsService {
             totalMonthIncome += getPayedSession(sessionDto);
         }
         setPaymentAllStudents(debts, payed, totalMonthIncome, studentsStatisticsResponseDto);
-
         return studentsStatisticsResponseDto;
     }
 
-    public StatisticsOverAllDto statisticsOverAll(Month month, Year year) {
+    private int getPayedSession(SessionDto sessionDto) {
+        return sessionDto.getDuration() * sessionDto.getPricePerHour() / 60;
+    }
+
+    private void setPayment(int deptToday, int deptMonth, int monthPay, int remainingPay, int payed, StudentStatisticsResponseDto studentStatisticsResponseDto) {
+        studentStatisticsResponseDto.setDeptToday(deptToday);
+        studentStatisticsResponseDto.setDeptMonth(deptMonth);
+        studentStatisticsResponseDto.setMonthPay(monthPay);
+        studentStatisticsResponseDto.setRemainingPay(remainingPay);
+        studentStatisticsResponseDto.setPayed(payed);
+    }
+
+    private void setPaymentS(int monthPayS, int remainingPayS, int payedS, PastStudentStatisticsResponseDto pastStudentStatisticsResponseDto) {
+        pastStudentStatisticsResponseDto.setMonthPay(monthPayS);
+        pastStudentStatisticsResponseDto.setRemainingPay(remainingPayS);
+        pastStudentStatisticsResponseDto.setPayed(payedS);
+    }
+
+    private void setPaymentAllStudents(int debts, int payed, int totalMonthIncome, StudentsStatisticsResponseDto studentsStatisticsResponseDto) {
+        studentsStatisticsResponseDto.setDebts(debts);
+        studentsStatisticsResponseDto.setPayed(payed);
+        studentsStatisticsResponseDto.setTotalMonthIncome(totalMonthIncome);
+    }
+
+    /*    public StatisticsOverAllDto statisticsOverAll(Month month, Year year) {
         List<Session> sessionList = sessionRepository.findAll();
         StatisticsOverAllDto statisticsOverAllDto = new StatisticsOverAllDto();
         ArrayList<WeekHours> weekHours = new ArrayList<WeekHours>();
@@ -158,31 +165,6 @@ public class StatisticsService {
         statisticsOverAllDto.setMonthHours(monthHOurs);
         statisticsOverAllDto.setWeekHours(weekHours);
         return statisticsOverAllDto;
-    }
-
-    private int getPayedSession(SessionDto sessionDto) {
-        return sessionDto.getDuration() * sessionDto.getPricePerHour() / 60;
-    }
-
-    private void setPayment(int deptToday, int deptMonth, int monthPay, int remainingPay, int payed, StudentStatisticsResponseDto studentStatisticsResponseDto) {
-        studentStatisticsResponseDto.setDeptToday(deptToday);
-        studentStatisticsResponseDto.setDeptMonth(deptMonth);
-        studentStatisticsResponseDto.setMonthPay(monthPay);
-        studentStatisticsResponseDto.setRemainingPay(remainingPay);
-        studentStatisticsResponseDto.setPayed(payed);
-    }
-
-    private void setPaymentS(int monthPayS, int remainingPayS, int payedS, PastStudentStatisticsResponseDto pastStudentStatisticsResponseDto) {
-        pastStudentStatisticsResponseDto.setMonthPayS(monthPayS);
-        pastStudentStatisticsResponseDto.setRemainingPayS(remainingPayS);
-        pastStudentStatisticsResponseDto.setPayedS(payedS);
-    }
-
-    private void setPaymentAllStudents(int debts, int payed, int totalMonthIncome, StudentsStatisticsResponseDto studentsStatisticsResponseDto) {
-        studentsStatisticsResponseDto.setDebts(debts);
-        studentsStatisticsResponseDto.setPayed(payed);
-        studentsStatisticsResponseDto.setTotalMonthIncome(totalMonthIncome);
-    }
-
+    }*/
 
 }

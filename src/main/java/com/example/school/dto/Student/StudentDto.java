@@ -3,7 +3,6 @@ package com.example.school.dto.Student;
 import com.example.school.dto.LiveStream.LiveStreamDto;
 import com.example.school.dto.Session.SessionDto;
 import com.example.school.enums.Gender;
-import com.example.school.model.Student.StudentContactDetails;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,7 +19,7 @@ import java.util.List;
 public class StudentDto {
 
     private Integer id;
-    private StudentContactDetails studentContactDetails;
+    private StudentContactDetailsDto studentContactDetailsDto;
     private Integer age;
     private LocalDate dateOfBirth;
     private Gender gender;
@@ -28,9 +27,8 @@ public class StudentDto {
     private List<LiveStreamDto> liveStreams = new ArrayList<>();
 
 
-    public StudentDto(Integer id, StudentContactDetails studentContactDetails, Integer age, LocalDate dateOfBirth, Gender gender) {
+    public StudentDto(Integer id, Integer age, LocalDate dateOfBirth, Gender gender) {
         this.id=id;
-        this.studentContactDetails=studentContactDetails;
         this.age=age;
         this.dateOfBirth=dateOfBirth;
         this.gender=gender;
