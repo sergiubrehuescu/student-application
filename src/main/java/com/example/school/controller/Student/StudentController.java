@@ -37,10 +37,10 @@ public class StudentController {
 
     private Logger logger = LoggerFactory.getLogger(StudentController.class);
 
-    @PostMapping("add")//todo OK OK OK OK OK OK
+    @PostMapping("add")
     public StudentDto addStudent(@RequestBody @Valid Student student){
         logger.info("Trecut prin controller");
-        Student s = studentService.addStudent(student); //todo refactoring ?
+        Student s = studentService.addStudent(student);
         StudentDto studentDto = studentMapper.mapToDto(s);
 
         studentDto.setStudentContactDetailsDto(studentContactDetailsMapper.mapToDtoWithoutStudent(student.getStudentContactDetails()));

@@ -1,6 +1,8 @@
 package com.example.school.service;
 
+import com.example.school.dto.Session.SessionDto;
 import com.example.school.exception.ResourceNotFoundException;
+import com.example.school.mapper.SessionMapper;
 import com.example.school.model.Session.Session;
 import com.example.school.model.Student.Student;
 import com.example.school.repo.SessionRepository;
@@ -24,13 +26,15 @@ public class SessionService {
     private StudentService studentService;
 
     @Autowired
+    private SessionMapper sessionMapper;
+
+    @Autowired
     private StudentRepository studentRepository;
 
     public Session addSession(Session session, Integer id){
         Student student = studentService.findStudentById(id);
         student.getSessionList().add(session);
-        //studentRepository.save(student); // will create 2 sessions with a mull ptr for student_id
-        session.setStudent(student);// OK
+        session.setStudent(student);
         sessionRepository.save(session);
         return session;
     }
@@ -55,11 +59,11 @@ public class SessionService {
         return session;
     }
 
-    public String paySession(Integer idSession) { //OK
+    public SessionDto paySession(Integer idSession) {
         Session session = finSessionById(idSession);
         session.setPaid(true);
         sessionRepository.save(session);
-        return "Sesiunea cu id-ul " + idSession + " a fost platita !";
+        return sessionMapper.mapToDto(session);
     }
 
     public String addSessionsRecurent(Integer studentId,LocalDate localDate,Session session) {//OK
@@ -68,11 +72,11 @@ public class SessionService {
         Student student = studentService.findStudentById(studentId);
         LocalDate newDate = localDate;
         for (int i = 0; i < DAYS.between(localDate, localDate.plusMonths(3)); i+=7,counter++) {
-
             Session newSession = new Session(session.getIdSession(),session.getLanguageProgramming(),session.getDuration(),session.getPricePerHour(),session.isPaid(),newDate.plusDays(7),session.isRecurrent(),student);
             addSession(newSession,studentId);
         }
-        return ("Pentru " + student.getStudentContactDetails().getFirstName()+ " " + student.getStudentContactDetails().getLastName() + " au fost adaugate " +counter + " sedinte noi din data " + localDate + " pana la data " + localDate.plusMonths(3));
+
+        return (("Pentru " + student.getStudentContactDetails().getFirstName()+ " " + student.getStudentContactDetails().getLastName() + " au fost adaugate " +counter + " sedinte noi din data " + localDate + " pana la data " + localDate.plusMonths(3)));
     }
 
 

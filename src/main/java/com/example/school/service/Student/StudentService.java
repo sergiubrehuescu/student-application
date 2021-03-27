@@ -30,6 +30,9 @@ public class StudentService {
     @Autowired
     private SessionRepository sessionRepository;
 
+
+    //List<Session> sessionList = sessionRepository.findAll(); /todo Why not ?
+
     public Student addStudent(Student student){
         sessionRepository.saveAll(student.getSessionList());
         for (int i = 0; i < student.getSessionList().size(); i++) {
@@ -54,7 +57,6 @@ public class StudentService {
 
     public Student updateStudent(Student student){
         Student newStudent =findStudentById(student.getId());
-        //List<Session> sessionList = sessionRepository.findAll(); //todo do i need sessionList here ?
         updateStudentInfo(student, newStudent);
         return studentRepository.save(newStudent);
     }
@@ -65,7 +67,7 @@ public class StudentService {
 
     public List<SessionDto> getPaidSessions(Integer studentId){
         Student student=findStudentById(studentId);
-        List<Session> sessionList = student.getSessionList(); //todo can it be refactored ?
+        List<Session> sessionList = student.getSessionList();
         List<Session> paidSessions = sessionList.stream()
                 .filter(session -> session.getLocalDate().getMonth().equals(LocalDate.now().getMonth()))
                 .filter(Session::isPaid)
@@ -96,7 +98,6 @@ public class StudentService {
     }
 
     public List<SessionDto> deptToday(Integer studentId) {
-        //todo REFACTORING !!!!!!!
         Student student = studentRepository.findById(studentId).orElseThrow(()-> new ResourceNotFoundException("Student wit id " + studentId + "was not found"));
         List<Session> sessionList = student.getSessionList();
         Function<Session, SessionDto> mapToDto = sessionMapper::mapToDto; //interfata functionala care primeste un parametru si il transpofrma in altceva
@@ -169,8 +170,7 @@ public class StudentService {
         return sessionMapper.mapToDtoList(monthPayS);
     }
 
-    public List<SessionDto> payedS(Integer studentId, Month month, Year year) {
-        List<Session> sessionList = sessionRepository.findAll();
+    public List<SessionDto> payedS(List<Session> sessionList,Integer studentId, Month month, Year year) {
         List<Session> payedS = sessionList.stream()
                 .filter(session -> session.getStudent().getId().equals(studentId))
                 .filter(session -> session.getLocalDate().getMonth().equals(month))
@@ -180,8 +180,7 @@ public class StudentService {
         return sessionMapper.mapToDtoList(payedS);
     }
 
-    public List<SessionDto> studentsDebtsTotal() {
-        List<Session> sessionList =sessionRepository.findAll();
+    public List<SessionDto> studentsDebtsTotal(List<Session> sessionList) {
         List<Session> debtsTotal = sessionList.stream()
                 .filter(session -> session.getLocalDate().getMonth().equals(LocalDate.now().getMonth()))
                 .filter(session -> session.getLocalDate().isBefore(LocalDate.now()))
@@ -190,8 +189,7 @@ public class StudentService {
         return sessionMapper.mapToDtoList(debtsTotal);
     }
 
-    public List<SessionDto> studentsPayedTotal() {
-        List<Session> sessionList =sessionRepository.findAll();
+    public List<SessionDto> studentsPayedTotal(List<Session> sessionList) {
         List<Session> payedTotal = sessionList.stream()
                 .filter(session -> session.getLocalDate().getMonth().equals(LocalDate.now().getMonth()))
                 .filter(session -> session.getLocalDate().isBefore(LocalDate.now()))
@@ -200,8 +198,7 @@ public class StudentService {
         return sessionMapper.mapToDtoList(payedTotal);
     }
 
-    public List<SessionDto> studentsMonthIncomeTotal() {
-        List<Session> sessionList =sessionRepository.findAll();
+    public List<SessionDto> studentsMonthIncomeTotal(List<Session> sessionList) {
         List<Session> totalMonthIncome = sessionList.stream()
                 .filter(session -> session.getLocalDate().getMonth().equals(LocalDate.now().getMonth()))
                 .filter(session -> session.getLocalDate().isBefore(LocalDate.now()))
@@ -209,8 +206,7 @@ public class StudentService {
         return sessionMapper.mapToDtoList(totalMonthIncome);
     }
 
-    public List<SessionDto> studentsDebtsTotaMonth(Month month,Year year) {
-        List<Session> sessionList =sessionRepository.findAll();
+    public List<SessionDto> studentsDebtsTotaMonth(List<Session> sessionList,Month month,Year year) {
         List<Session> debtsTotalMonth = sessionList.stream()
                 .filter(session -> session.getLocalDate().getMonth().equals(month))
                 .filter(session -> session.getLocalDate().getYear()==year.getValue())
@@ -219,8 +215,7 @@ public class StudentService {
         return sessionMapper.mapToDtoList(debtsTotalMonth);
     }
 
-    public List<SessionDto> studentsPayedTotalMonth(Month month,Year year) {
-        List<Session> sessionList =sessionRepository.findAll();
+    public List<SessionDto> studentsPayedTotalMonth(List<Session> sessionList,Month month,Year year) {
         List<Session> payedTotalMonth = sessionList.stream()
                 .filter(session -> session.getLocalDate().getMonth().equals(month))
                 .filter(session -> session.getLocalDate().getYear()==year.getValue())
@@ -229,8 +224,7 @@ public class StudentService {
         return sessionMapper.mapToDtoList(payedTotalMonth);
     }
 
-    public List<SessionDto> studentsMonthIncomeTotalMonth(Month month,Year year) {
-        List<Session> sessionList =sessionRepository.findAll();
+    public List<SessionDto> studentsMonthIncomeTotalMonth(List<Session> sessionList,Month month,Year year) {
         List<Session> monthIncomeTotalMonth = sessionList.stream()
                 .filter(session -> session.getLocalDate().getMonth().equals(month))
                 .filter(session -> session.getLocalDate().getYear()==year.getValue())

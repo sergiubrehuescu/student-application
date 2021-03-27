@@ -21,7 +21,7 @@ public class LiveStreamDto {
     private String location;
     private LocalDate createdAt;
     private LanguageType languageType;
-    private List<StudentDto> studentList = new ArrayList<>(); //todo StudentDto
+    private List<StudentDto> studentList = new ArrayList<>();
 
     public LiveStreamDto(String location, LocalDate createdAt, LanguageType languageType) {
         this.location = location;

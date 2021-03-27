@@ -4,6 +4,8 @@ import com.example.school.dto.Session.SessionDto;
 import com.example.school.dto.Student.PastStudentStatisticsResponseDto;
 import com.example.school.dto.Student.StudentStatisticsResponseDto;
 import com.example.school.dto.Student.StudentsStatisticsResponseDto;
+import com.example.school.model.Session.Session;
+import com.example.school.repo.SessionRepository;
 import com.example.school.service.Student.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,6 +21,11 @@ public class StatisticsService {
     @Autowired
     private StudentService studentService;
 
+    @Autowired
+    private SessionRepository sessionRepository;
+
+    //List<Session> sessionList =sessionRepository.findAll();//todo why not ?
+
     public StudentStatisticsResponseDto studentStatistics(Integer studentId) {
         AtomicInteger deptToday= new AtomicInteger(); //int nu poate fi folosit in forEach
         int deptMonth=0;
@@ -32,7 +39,7 @@ public class StatisticsService {
         List<SessionDto> sessionDtoRemainingPay = studentService.remainingPay(studentId);
         List<SessionDto> sessionDtoListPayed = studentService.payed(studentId);
 
-        sessionDtoListDeptToday.forEach(x-> deptToday.addAndGet(getPayedSession(x))); //nu poti folosi un int/Integer in forEach
+        sessionDtoListDeptToday.forEach(x-> deptToday.addAndGet(getPayedSession(x))); //nu poti folosi un int
 
         deptMonth += sessionDtoListDeptMonth.stream().mapToInt(this::getPayedSession).sum();
 
@@ -53,11 +60,12 @@ public class StatisticsService {
     }
 
     public PastStudentStatisticsResponseDto studentStatisticsMonthYear(Integer studentId, Month month, Year year) {
+        List<Session> sessionList =sessionRepository.findAll();
         int monthPayS=0,remainingPayS=0,payedS=0;
         PastStudentStatisticsResponseDto pastStudentStatisticsResponseDto = new PastStudentStatisticsResponseDto();
         List<SessionDto> sessionDtoListMonthPayS = studentService.monthPayS(studentId,month,year);
         List<SessionDto> sessionDtoListRemainingPayS = studentService.remainingPayS(studentId,month,year);
-        List<SessionDto> sessionDtoListPayedS = studentService.payedS(studentId,month,year);
+        List<SessionDto> sessionDtoListPayedS = studentService.payedS(sessionList,studentId,month,year);
 
         for (SessionDto sessionDto : sessionDtoListMonthPayS) {
             monthPayS += getPayedSession(sessionDto);
@@ -74,12 +82,12 @@ public class StatisticsService {
     }
 
     public StudentsStatisticsResponseDto studentsStatistics() {
-        //todo REFACTORING !!!!
+        List<Session> sessionList =sessionRepository.findAll();
         int debts=0,payed=0,income=0;
         StudentsStatisticsResponseDto studentsStatisticsResponseDto = new StudentsStatisticsResponseDto();
-        List<SessionDto> debtsTotal = studentService.studentsDebtsTotal();
-        List<SessionDto> payedTotal = studentService.studentsPayedTotal();
-        List<SessionDto> monthIncomeTotal = studentService.studentsMonthIncomeTotal();
+        List<SessionDto> debtsTotal = studentService.studentsDebtsTotal(sessionList);
+        List<SessionDto> payedTotal = studentService.studentsPayedTotal(sessionList);
+        List<SessionDto> monthIncomeTotal = studentService.studentsMonthIncomeTotal(sessionList);
 
         for (SessionDto sessionDto : debtsTotal) {
             debts += getPayedSession(sessionDto);
@@ -95,11 +103,12 @@ public class StatisticsService {
     }
 
     public StudentsStatisticsResponseDto studentsStatisticsMonthYear(Month month, Year year) {
+        List<Session> sessionList =sessionRepository.findAll();
         int debts=0,payed=0,totalMonthIncome=0;
         StudentsStatisticsResponseDto studentsStatisticsResponseDto = new StudentsStatisticsResponseDto();
-        List<SessionDto> debtsTotalMonth = studentService.studentsDebtsTotaMonth(month,year);
-        List<SessionDto> payedTotalMonth = studentService.studentsPayedTotalMonth(month,year);
-        List<SessionDto> monthIncomeTotalMonth = studentService.studentsMonthIncomeTotalMonth(month,year);
+        List<SessionDto> debtsTotalMonth = studentService.studentsDebtsTotaMonth(sessionList,month,year);
+        List<SessionDto> payedTotalMonth = studentService.studentsPayedTotalMonth(sessionList,month,year);
+        List<SessionDto> monthIncomeTotalMonth = studentService.studentsMonthIncomeTotalMonth(sessionList,month,year);
 
         for (SessionDto sessionDto : debtsTotalMonth) {
             debts += getPayedSession(sessionDto);

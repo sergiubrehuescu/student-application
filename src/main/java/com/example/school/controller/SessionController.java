@@ -46,7 +46,7 @@ public class SessionController {
     }
 
     @PutMapping("pay/{id}")
-    public String paySession(@PathVariable @Valid Integer id){
+    public SessionDto paySession(@PathVariable @Valid Integer id){
         return sessionService.paySession(id);
     }
 

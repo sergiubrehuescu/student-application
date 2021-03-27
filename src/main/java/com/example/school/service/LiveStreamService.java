@@ -1,16 +1,14 @@
 package com.example.school.service;
 
 import com.example.school.controller.LiveStreamController;
-import com.example.school.dto.LiveStream.CreateLiveStreamRequestDto;
-import com.example.school.dto.LiveStream.CreateLiveStreamResponseDto;
-import com.example.school.dto.LiveStream.LiveStreamDto;
-import com.example.school.dto.LiveStream.RegisterStudentToLiveStreamRequestDto;
+import com.example.school.dto.LiveStream.*;
+import com.example.school.dto.Student.StudentDto;
 import com.example.school.exception.ResourceNotFoundException;
 import com.example.school.mapper.LiveStreamMapper;
+import com.example.school.mapper.StudentMapper;
 import com.example.school.model.LiveStream.LiveStream;
 import com.example.school.model.Student.Student;
 import com.example.school.repo.LiveStreamRepository;
-import com.example.school.repo.StudentRepository;
 import com.example.school.service.Student.StudentService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,7 +19,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class LiveStreamServive {
+public class LiveStreamService {
 
     @Autowired
     private LiveStreamRepository liveStreamRepository;
@@ -30,10 +28,10 @@ public class LiveStreamServive {
     private LiveStreamMapper liveStreamMapper;
 
     @Autowired
-    StudentRepository studentRepository;
+    private StudentMapper studentMapper;
 
     @Autowired
-    StudentService studentService;
+    private StudentService studentService;
 
     private Logger logger = LoggerFactory.getLogger(LiveStreamController.class);
 
@@ -48,33 +46,34 @@ public class LiveStreamServive {
         return createLiveStreamResponseDto;
     }
 
-    public String registerToLiveStream(RegisterStudentToLiveStreamRequestDto registerStudentToLiveStreamRequestDto) {
-        //todo confirmare LiveStreamRegisterConfirmationDto(LiveStreamDto StudentDto)
+    public RegisterStudentToLiveStreamResponseDto registerToLiveStream(RegisterStudentToLiveStreamRequestDto registerStudentToLiveStreamRequestDto) {
         LiveStream liveStream =findLiveStreamById(registerStudentToLiveStreamRequestDto.getLiveStreamId());
         Student student = studentService.findStudentById(registerStudentToLiveStreamRequestDto.getStudentId());
-        //todo check before adding the student , if exsit throw a new error
-        //todo for unregister the same case
-        liveStream.getStudentList().add(student);
-        student.getLiveStreamList().add(liveStream);
-        liveStreamRepository.save(liveStream);
-        return student.getStudentContactDetails().getFirstName() + " " + student.getStudentContactDetails().getLastName() + "s-a inregistrat la evenimentul in limbajul "
-                + liveStream.getLanguageType() + " din " + liveStream.getLocation();
+        checkRegisterLiveStream(liveStream, student);
+
+        return LiveStreamRegisterConfirmationDto(liveStreamMapper.mapToLiveStreamDto(liveStream),studentMapper.mapToDto(student));
+    }
+
+    public RegisterStudentToLiveStreamResponseDto unregisterToLiveStream(RegisterStudentToLiveStreamRequestDto registerStudentToLiveStreamRequestDto){
+        LiveStream liveStream =findLiveStreamById(registerStudentToLiveStreamRequestDto.getLiveStreamId());
+        Student student = studentService.findStudentById(registerStudentToLiveStreamRequestDto.getStudentId());
+        checkUnregisterLiveStream(liveStream, student);
+
+        return LiveStreamRegisterConfirmationDto(liveStreamMapper.mapToLiveStreamDto(liveStream),studentMapper.mapToDto(student));
     }
 
     public LiveStream updateLiveStream(LiveStream liveStream) {
         LiveStream newLiveStream = findLiveStreamById(liveStream.getId());
-        newLiveStream.setLanguageType(liveStream.getLanguageType());
-        newLiveStream.setCreatedAt(liveStream.getCreatedAt());
-        newLiveStream.setLocation(liveStream.getLocation());
+        setUpdateLiveStream(liveStream, newLiveStream);
         return liveStreamRepository.save(newLiveStream);
     }
 
     public LiveStreamDto deleteLiveStream(Integer id) {
         LiveStream liveStream = findLiveStreamById(id);
         List<Student> students = liveStream.getStudentList();
-        for (int i = 0; i < students.size(); i++) {
-            students.get(i).getLiveStreamList().remove(liveStream);
-        }
+
+        students.stream().forEach(student -> student.getLiveStreamList().remove(liveStream));
+
         liveStreamRepository.delete(liveStream);
         LiveStreamDto liveStreamDto = liveStreamMapper.mapToLiveStreamDto(liveStream);
         return liveStreamDto;
@@ -95,5 +94,36 @@ public class LiveStreamServive {
 
         //todo return liveStreamRepository.findById(id).orElseThrow(()-> new ResourceNotFoundException("LiveStream with id " + id + " was not found"));
     }
+
+    private RegisterStudentToLiveStreamResponseDto LiveStreamRegisterConfirmationDto(LiveStreamDto liveStreamDto, StudentDto studentDto) {
+        RegisterStudentToLiveStreamResponseDto registerStudentToLiveStreamResponseDto = new RegisterStudentToLiveStreamResponseDto();
+        registerStudentToLiveStreamResponseDto.setLiveStreamDto(liveStreamDto);
+        registerStudentToLiveStreamResponseDto.setStudentDto(studentDto);
+        return registerStudentToLiveStreamResponseDto;
+    }
+
+    private void setUpdateLiveStream(LiveStream liveStream, LiveStream newLiveStream) {
+        newLiveStream.setLanguageType(liveStream.getLanguageType());
+        newLiveStream.setCreatedAt(liveStream.getCreatedAt());
+        newLiveStream.setLocation(liveStream.getLocation());
+    }
+
+    private void checkUnregisterLiveStream(LiveStream liveStream, Student student) {
+        if(liveStream.getStudentList().contains(student)){
+            liveStream.getStudentList().remove(student);
+            student.getLiveStreamList().remove(liveStream);
+            liveStreamRepository.save(liveStream);
+        }
+        else throw new ResourceNotFoundException("Student with id" + student.getId() + "is not part of the LiveStream anyway");
+    }
+    private void checkRegisterLiveStream(LiveStream liveStream, Student student) {
+        if(!liveStream.getStudentList().contains(student)){
+            liveStream.getStudentList().add(student);
+            student.getLiveStreamList().add(liveStream);
+            liveStreamRepository.save(liveStream);
+        }
+        else throw new ResourceNotFoundException("Student with id " + student.getId() + " is already part of the LiveStream");
+    }
+
 
 }
