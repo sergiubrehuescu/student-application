@@ -26,8 +26,6 @@ public class LiveStreamMapper {
         return liveStreamList.stream()
                 .map(this::mapToLiveStreamDto)
                 .collect(Collectors.toList());
-
-
     }
 
 }

@@ -7,12 +7,14 @@ import com.example.school.model.Session.Session;
 import com.example.school.model.Student.Student;
 import com.example.school.repo.SessionRepository;
 import com.example.school.repo.StudentRepository;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.Month;
 import java.time.Year;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
@@ -30,7 +32,7 @@ public class StudentService {
     @Autowired
     private SessionRepository sessionRepository;
 
-
+    ModelMapper mapper = new ModelMapper();
     //List<Session> sessionList = sessionRepository.findAll(); /todo Why not ?
 
     public Student addStudent(Student student){
@@ -72,7 +74,7 @@ public class StudentService {
                 .filter(session -> session.getLocalDate().getMonth().equals(LocalDate.now().getMonth()))
                 .filter(Session::isPaid)
                 .collect(Collectors.toList());
-        return sessionMapper.mapToDtoList(paidSessions);
+        return Arrays.asList(mapper.map(paidSessions,SessionDto[].class));
     }
 
     public List<SessionDto> getNotPaidSessionsMonthYear(Integer studentId, Month month, Year year) {
@@ -83,7 +85,7 @@ public class StudentService {
                 .filter(session -> session.getLocalDate().getYear()==year.getValue())
                 .filter(session -> !session.isPaid())
                 .collect(Collectors.toList());
-        return sessionMapper.mapToDtoList(notPaidSessionsMonthYear);
+        return Arrays.asList(mapper.map(notPaidSessionsMonthYear,SessionDto[].class));
     }
 
     public List<SessionDto> getPaidSessionsMonthYear(Integer studentId, Month month, Year year) {
@@ -94,9 +96,9 @@ public class StudentService {
                 .filter(session -> session.getLocalDate().getYear()==year.getValue())
                 .filter(Session::isPaid)
                 .collect(Collectors.toList());
-        return sessionMapper.mapToDtoList(paidSessionsMonthYear);
+        return Arrays.asList(mapper.map(paidSessionsMonthYear,SessionDto[].class));
     }
-
+    //todo ?????????????
     public List<SessionDto> deptToday(Integer studentId) {
         Student student = studentRepository.findById(studentId).orElseThrow(()-> new ResourceNotFoundException("Student wit id " + studentId + "was not found"));
         List<Session> sessionList = student.getSessionList();
@@ -117,7 +119,7 @@ public class StudentService {
                 .filter(session -> session.getLocalDate().getMonth().equals(LocalDate.now().getMonth()))
                 .filter(session -> !session.isPaid())
                 .collect(Collectors.toList());
-        return sessionMapper.mapToDtoList(deptMonth);
+        return Arrays.asList(mapper.map(deptMonth,SessionDto[].class));
     }
 
     public List<SessionDto> monthPay(Integer studentId) {
@@ -126,7 +128,7 @@ public class StudentService {
         List<Session> monthPay = sessionList.stream()
                 .filter(session -> session.getLocalDate().getMonth().equals(LocalDate.now().getMonth()))
                 .collect(Collectors.toList());
-        return sessionMapper.mapToDtoList(monthPay);
+        return Arrays.asList(mapper.map(monthPay,SessionDto[].class));
     }
 
     public List<SessionDto> remainingPay(Integer studentId) {
@@ -136,7 +138,7 @@ public class StudentService {
                 .filter(session -> session.getLocalDate().getMonth().equals(LocalDate.now().getMonth()))
                 .filter(session -> !session.isPaid())
                 .collect(Collectors.toList());
-        return sessionMapper.mapToDtoList(remainingPay);
+        return Arrays.asList(mapper.map(remainingPay,SessionDto[].class));
     }
 
     public List<SessionDto> payed(Integer studentId) {
@@ -146,7 +148,7 @@ public class StudentService {
                 .filter(session -> session.getLocalDate().now().getMonth().equals(LocalDate.now().getMonth()))
                 .filter(Session::isPaid)
                 .collect(Collectors.toList());
-        return sessionMapper.mapToDtoList(payed);
+        return Arrays.asList(mapper.map(payed,SessionDto[].class));
     }
 
     public List<SessionDto> remainingPayS(Integer studentId, Month month, Year year) {
@@ -157,7 +159,7 @@ public class StudentService {
                 .filter(session -> session.getLocalDate().getYear()==year.getValue())
                 .filter(session -> !session.isPaid())
                 .collect(Collectors.toList());
-        return sessionMapper.mapToDtoList(remainingPayS);
+        return Arrays.asList(mapper.map(remainingPayS,SessionDto[].class));
     }
 
     public List<SessionDto> monthPayS(Integer studentId, Month month,Year year) {
@@ -167,7 +169,7 @@ public class StudentService {
                 .filter(session -> session.getLocalDate().getMonth().equals(month))
                 .filter(session -> session.getLocalDate().getYear()==year.getValue())
                 .collect(Collectors.toList());
-        return sessionMapper.mapToDtoList(monthPayS);
+        return Arrays.asList(mapper.map(monthPayS,SessionDto[].class));
     }
 
     public List<SessionDto> payedS(List<Session> sessionList,Integer studentId, Month month, Year year) {
@@ -177,7 +179,7 @@ public class StudentService {
                 .filter(session -> session.getLocalDate().getYear()==year.getValue())
                 .filter(session -> session.isPaid())
                 .collect(Collectors.toList());
-        return sessionMapper.mapToDtoList(payedS);
+        return Arrays.asList(mapper.map(payedS,SessionDto[].class));
     }
 
     public List<SessionDto> studentsDebtsTotal(List<Session> sessionList) {
@@ -186,7 +188,7 @@ public class StudentService {
                 .filter(session -> session.getLocalDate().isBefore(LocalDate.now()))
                 .filter(session -> !session.isPaid())
                 .collect(Collectors.toList());
-        return sessionMapper.mapToDtoList(debtsTotal);
+        return Arrays.asList(mapper.map(debtsTotal,SessionDto[].class));
     }
 
     public List<SessionDto> studentsPayedTotal(List<Session> sessionList) {
@@ -195,7 +197,7 @@ public class StudentService {
                 .filter(session -> session.getLocalDate().isBefore(LocalDate.now()))
                 .filter(session -> session.isPaid())
                 .collect(Collectors.toList());
-        return sessionMapper.mapToDtoList(payedTotal);
+        return Arrays.asList(mapper.map(payedTotal,SessionDto[].class));
     }
 
     public List<SessionDto> studentsMonthIncomeTotal(List<Session> sessionList) {
@@ -203,7 +205,7 @@ public class StudentService {
                 .filter(session -> session.getLocalDate().getMonth().equals(LocalDate.now().getMonth()))
                 .filter(session -> session.getLocalDate().isBefore(LocalDate.now()))
                 .collect(Collectors.toList());
-        return sessionMapper.mapToDtoList(totalMonthIncome);
+        return Arrays.asList(mapper.map(totalMonthIncome,SessionDto[].class));
     }
 
     public List<SessionDto> studentsDebtsTotaMonth(List<Session> sessionList,Month month,Year year) {
@@ -212,7 +214,7 @@ public class StudentService {
                 .filter(session -> session.getLocalDate().getYear()==year.getValue())
                 .filter(session -> !session.isPaid())
                 .collect(Collectors.toList());
-        return sessionMapper.mapToDtoList(debtsTotalMonth);
+        return Arrays.asList(mapper.map(debtsTotalMonth,SessionDto[].class));
     }
 
     public List<SessionDto> studentsPayedTotalMonth(List<Session> sessionList,Month month,Year year) {
@@ -221,7 +223,7 @@ public class StudentService {
                 .filter(session -> session.getLocalDate().getYear()==year.getValue())
                 .filter(session -> session.isPaid())
                 .collect(Collectors.toList());
-        return sessionMapper.mapToDtoList(payedTotalMonth);
+        return Arrays.asList(mapper.map(payedTotalMonth,SessionDto[].class));
     }
 
     public List<SessionDto> studentsMonthIncomeTotalMonth(List<Session> sessionList,Month month,Year year) {
@@ -229,7 +231,7 @@ public class StudentService {
                 .filter(session -> session.getLocalDate().getMonth().equals(month))
                 .filter(session -> session.getLocalDate().getYear()==year.getValue())
                 .collect(Collectors.toList());
-        return sessionMapper.mapToDtoList(monthIncomeTotalMonth);
+        return Arrays.asList(mapper.map(monthIncomeTotalMonth,SessionDto[].class));
     }
 
     private void updateStudentInfo(Student student, Student newStudent) {

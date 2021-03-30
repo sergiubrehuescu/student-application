@@ -1,9 +1,9 @@
 package com.example.school.controller;
 
 import com.example.school.dto.LiveStream.*;
-import com.example.school.mapper.LiveStreamMapper;
 import com.example.school.model.LiveStream.LiveStream;
 import com.example.school.service.LiveStreamService;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,8 +14,7 @@ public class LiveStreamController {
     @Autowired
     private LiveStreamService liveStreamServive;
 
-    @Autowired
-    private LiveStreamMapper liveStreamMapper;
+    ModelMapper mapper = new ModelMapper();
 
     @PostMapping
     private CreateLiveStreamResponseDto createLiveStream(@RequestBody CreateLiveStreamRequestDto createLiveStreamRequestDto){
@@ -30,7 +29,7 @@ public class LiveStreamController {
     @PutMapping
     private LiveStreamDto updateLiveStream(@RequestBody LiveStream liveStream){
         liveStreamServive.updateLiveStream(liveStream);
-        return liveStreamMapper.mapToLiveStreamDto(liveStream);
+        return mapper.map(liveStream,LiveStreamDto.class);
     }
 
     @GetMapping("/{id}")
@@ -43,7 +42,7 @@ public class LiveStreamController {
         return liveStreamServive.registerToLiveStream(registerStudentToLiveStreamRequestDto);
     }
 
-    @PostMapping("unregisterToLiveStream") //todo QQQQQQQQQQQQ
+    @PostMapping("unregisterToLiveStream")
     private RegisterStudentToLiveStreamResponseDto unregisterToLiveStream(@RequestBody RegisterStudentToLiveStreamRequestDto registerStudentToLiveStreamRequestDto){
         return liveStreamServive.unregisterToLiveStream(registerStudentToLiveStreamRequestDto);
     }

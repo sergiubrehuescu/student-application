@@ -23,7 +23,7 @@ public class Session {
     private String languageProgramming;
     private Integer duration;
     private Integer pricePerHour;
-    private boolean paid; //change to boolean
+    private boolean paid;
     private LocalDate localDate;
     private boolean recurrent;
 

@@ -26,10 +26,11 @@ public class LiveStream {
 
     private String location;
     private LocalDate createdAt=LocalDate.now(); //todo tema live stream , date , expires at()
+    //todo topics in the list of the student , cannot registrr to event if is not part of his own list
     //todo with entity
     private LanguageType languageType;
 
     @ManyToMany(mappedBy = "liveStreamList")
     List<Student> studentList = new ArrayList<>();
-
+    //todo s[pring profiles ->
 }

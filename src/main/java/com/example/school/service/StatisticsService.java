@@ -24,8 +24,6 @@ public class StatisticsService {
     @Autowired
     private SessionRepository sessionRepository;
 
-    //List<Session> sessionList =sessionRepository.findAll();//todo why not ?
-
     public StudentStatisticsResponseDto studentStatistics(Integer studentId) {
         AtomicInteger deptToday= new AtomicInteger(); //int nu poate fi folosit in forEach
         int deptMonth=0;

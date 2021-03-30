@@ -2,16 +2,18 @@ package com.example.school.service;
 
 import com.example.school.dto.Session.SessionDto;
 import com.example.school.exception.ResourceNotFoundException;
-import com.example.school.mapper.SessionMapper;
 import com.example.school.model.Session.Session;
 import com.example.school.model.Student.Student;
 import com.example.school.repo.SessionRepository;
 import com.example.school.repo.StudentRepository;
 import com.example.school.service.Student.StudentService;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 import static java.time.temporal.ChronoUnit.DAYS;
@@ -26,10 +28,9 @@ public class SessionService {
     private StudentService studentService;
 
     @Autowired
-    private SessionMapper sessionMapper;
-
-    @Autowired
     private StudentRepository studentRepository;
+
+    ModelMapper mapper = new ModelMapper();
 
     public Session addSession(Session session, Integer id){
         Student student = studentService.findStudentById(id);
@@ -63,22 +64,20 @@ public class SessionService {
         Session session = finSessionById(idSession);
         session.setPaid(true);
         sessionRepository.save(session);
-        return sessionMapper.mapToDto(session);
+        return mapper.map(session,SessionDto.class);
     }
 
-    public String addSessionsRecurent(Integer studentId,LocalDate localDate,Session session) {//OK
-        //todo refactoring with stream API
-        int counter=0;
+    public List<SessionDto> addSessionsRecurent(Integer studentId, LocalDate localDate, Session session) {
         Student student = studentService.findStudentById(studentId);
-        LocalDate newDate = localDate;
-        for (int i = 0; i < DAYS.between(localDate, localDate.plusMonths(3)); i+=7,counter++) {
-            Session newSession = new Session(session.getIdSession(),session.getLanguageProgramming(),session.getDuration(),session.getPricePerHour(),session.isPaid(),newDate.plusDays(7),session.isRecurrent(),student);
-            addSession(newSession,studentId);
+
+        for (int i = 0; i < DAYS.between(localDate, localDate.plusMonths(3)); i+=7) {
+            System.out.println(localDate.plusDays(i));
+            Session newSession = new Session(session.getIdSession(),session.getLanguageProgramming(),session.getDuration(),session.getPricePerHour(),session.isPaid(),localDate.plusDays(i),session.isRecurrent(),student);
+            student.getSessionList().add(newSession);
         }
-
-        return (("Pentru " + student.getStudentContactDetails().getFirstName()+ " " + student.getStudentContactDetails().getLastName() + " au fost adaugate " +counter + " sedinte noi din data " + localDate + " pana la data " + localDate.plusMonths(3)));
-    }
-
+        studentRepository.save(student);
+        return Arrays.asList(mapper.map(student.getSessionList(),SessionDto[].class));
+        }
 
     private void updateSessionInfo(Session session, Session newSession) {
         newSession.setIdSession(session.getIdSession());
