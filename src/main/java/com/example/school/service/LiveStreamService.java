@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,6 +36,8 @@ public class LiveStreamService {
         LiveStream liveStream = new LiveStream();
         liveStream.setLocation(createLiveStreamRequestDto.getLocation());
         liveStream.setLanguageType(createLiveStreamRequestDto.getLanguageType());
+        liveStream.setExpireRegisterDate(createLiveStreamRequestDto.getExpireRegisterDate());
+        liveStream.setTopicLiveStream(createLiveStreamRequestDto.getTopicLiveStream());
         LiveStream savedLiveStream = liveStreamRepository.save(liveStream);
         CreateLiveStreamResponseDto createLiveStreamResponseDto = mapper.map(createLiveStreamRequestDto,CreateLiveStreamResponseDto.class);
         createLiveStreamResponseDto.setId(savedLiveStream.getId());
@@ -102,6 +105,8 @@ public class LiveStreamService {
         newLiveStream.setLanguageType(liveStream.getLanguageType());
         newLiveStream.setCreatedAt(liveStream.getCreatedAt());
         newLiveStream.setLocation(liveStream.getLocation());
+        newLiveStream.setTopicLiveStream(liveStream.getTopicLiveStream());
+        newLiveStream.setExpireRegisterDate(liveStream.getExpireRegisterDate());
     }
 
     private void checkUnregisterLiveStream(LiveStream liveStream, Student student) {
@@ -113,12 +118,15 @@ public class LiveStreamService {
         else throw new ResourceNotFoundException("Student with id" + student.getId() + "is not part of the LiveStream anyway");
     }
     private void checkRegisterLiveStream(LiveStream liveStream, Student student) {
-        if(!liveStream.getStudentList().contains(student)){
-            liveStream.getStudentList().add(student);
-            student.getLiveStreamList().add(liveStream);
-            liveStreamRepository.save(liveStream);
+        if(liveStream.getExpireRegisterDate().isAfter(LocalDate.now())){
+            if((!liveStream.getStudentList().contains(student) && liveStream.getExpireRegisterDate().isAfter(LocalDate.now()))){
+                liveStream.getStudentList().add(student);
+                student.getLiveStreamList().add(liveStream);
+                liveStreamRepository.save(liveStream);
+            }
+            else throw new ResourceNotFoundException("Student with id " + student.getId() + " is already part of the LiveStream");
         }
-        else throw new ResourceNotFoundException("Student with id " + student.getId() + " is already part of the LiveStream");
+        else throw new ResourceNotFoundException("Livestream with id " + liveStream.getId() + " has already expired date and cannot get register");
         //todo custom exception NOT ALLOWED
     }
 

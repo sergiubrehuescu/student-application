@@ -1,6 +1,7 @@
 package com.example.school.controller;
 
 import com.example.school.dto.Session.SessionDto;
+import com.example.school.dto.StatisticsOverAll.StatisticsOverAllDto;
 import com.example.school.dto.Student.PastStudentStatisticsResponseDto;
 import com.example.school.dto.Student.StudentStatisticsResponseDto;
 import com.example.school.dto.Student.StudentsStatisticsResponseDto;
@@ -40,8 +41,6 @@ public class StatisticsController {
     public List<SessionDto> getPaidSessions(@PathVariable Integer studentId){
         return  studentService.getPaidSessions(studentId);
     }
-    //daca il trimiti sa ia in considerare luna
-    //daca nu il trimiti sa ia dupa luna curenta
 
     @GetMapping("getPaidSessions/{studentId}/{month}/{year}")
     public List<SessionDto> getPaidSessionsMonthYear(@PathVariable Integer studentId,@PathVariable Month month,@PathVariable Year year){
@@ -68,8 +67,8 @@ public class StatisticsController {
         return statisticsService.studentsStatisticsMonthYear(monthName,year);
     }
 
-/*    @GetMapping("hours/{monthName}/{year}")
+    @GetMapping("hours/{monthName}/{year}")
     public StatisticsOverAllDto statisticsOverAll(@PathVariable Month monthName, @PathVariable Year year){
         return statisticsService.statisticsOverAll(monthName,year);
-    }*/
+    }
 }

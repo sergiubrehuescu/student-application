@@ -14,11 +14,11 @@ import java.util.stream.Collectors;
 public class LiveStreamMapper {
 
     public LiveStreamDto mapToLiveStreamDto(LiveStream liveStream){
-        return new LiveStreamDto(liveStream.getLocation(), liveStream.getCreatedAt(),liveStream.getLanguageType());
+        return new LiveStreamDto(liveStream.getLocation(), liveStream.getCreatedAt(),liveStream.getLanguageType(),liveStream.getExpireRegisterDate(),liveStream.getTopicLiveStream());
     }
 
     public CreateLiveStreamResponseDto mapToLiveStreamDto2(CreateLiveStreamRequestDto createLiveStreamRequestDto){
-        return new CreateLiveStreamResponseDto(createLiveStreamRequestDto.getLanguageType(),createLiveStreamRequestDto.getLocation());
+        return new CreateLiveStreamResponseDto(createLiveStreamRequestDto.getLanguageType(),createLiveStreamRequestDto.getLocation(),createLiveStreamRequestDto.getExpireRegisterDate(),createLiveStreamRequestDto.getTopicLiveStream());
     }
 
     public List<LiveStreamDto> mapToLiveStreamListDto(List<LiveStream> liveStreamList) {

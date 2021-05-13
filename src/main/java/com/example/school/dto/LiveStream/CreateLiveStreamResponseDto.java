@@ -19,11 +19,15 @@ public class CreateLiveStreamResponseDto {
     private int id;
     private String location;
     private LocalDate createdAt=LocalDate.now();
+    private LocalDate expireRegisterDate;
+    private String topicLiveStream;
     private LanguageType languageType;
     List<StudentDto> studentDtoList = new ArrayList<>();
 
-    public CreateLiveStreamResponseDto(LanguageType languageType, String location) {
+    public CreateLiveStreamResponseDto(LanguageType languageType, String location,LocalDate expireRegisterDate,String topicLiveStream) {
         this.languageType=languageType;
         this.location=location;
+        this.expireRegisterDate=expireRegisterDate;
+        this.topicLiveStream=topicLiveStream;
     }
 }

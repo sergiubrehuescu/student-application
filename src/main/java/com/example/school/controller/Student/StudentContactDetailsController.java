@@ -21,6 +21,5 @@ public class StudentContactDetailsController {
     public StudentContactDetailsDto findStudentDetails(@PathVariable Integer studentId){
         StudentContactDetails studentContactDetails = studentContactDetailsService.findStudentDetailsById(studentId);
         return mapper.map(studentContactDetails,StudentContactDetailsDto.class);
-
     }
 }

@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDate;
+
 @Setter
 @Getter
 @NoArgsConstructor
@@ -13,6 +15,8 @@ import lombok.Setter;
 public class UpdateLiveStreamResponseDto {
 
     private String location;
-    private LanguageType languageType; // si id //
+    private LanguageType languageType;
+    private LocalDate expireRegisterDate;
+    private String topicLiveStream;
 
 }

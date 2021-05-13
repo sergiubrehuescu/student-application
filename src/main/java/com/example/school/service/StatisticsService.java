@@ -1,6 +1,7 @@
 package com.example.school.service;
 
 import com.example.school.dto.Session.SessionDto;
+import com.example.school.dto.StatisticsOverAll.StatisticsOverAllDto;
 import com.example.school.dto.Student.PastStudentStatisticsResponseDto;
 import com.example.school.dto.Student.StudentStatisticsResponseDto;
 import com.example.school.dto.Student.StudentsStatisticsResponseDto;
@@ -10,8 +11,11 @@ import com.example.school.service.Student.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.time.Month;
 import java.time.Year;
+import java.util.Calendar;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -145,7 +149,27 @@ public class StatisticsService {
         studentsStatisticsResponseDto.setTotalMonthIncome(totalMonthIncome);
     }
 
-    /*    public StatisticsOverAllDto statisticsOverAll(Month month, Year year) {
+    public StatisticsOverAllDto statisticsOverAll(Month monthName, Year year) {
+        StatisticsOverAllDto a= new StatisticsOverAllDto();
+        //sets the calendar to current date and time
+        Calendar date = Calendar.getInstance();
+        //sets the calendar with starting day of week
+        date.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
+        //printing of first and last day of th week
+        DateFormat dateformat = new SimpleDateFormat("EEE dd/MM/yyyy");
+        System.out.println(dateformat.format(date.getTime()));
+        for (int i = 0; i<7; i++)
+        {
+            date.add(Calendar.DATE, 1);
+        }
+        System.out.println(dateformat.format(date.getTime()));
+        //System.out.println(date.add);
+        return a;
+    }
+
+
+
+/*        public StatisticsOverAllDto statisticsOverAll(Month month, Year year) {
         List<Session> sessionList = sessionRepository.findAll();
         StatisticsOverAllDto statisticsOverAllDto = new StatisticsOverAllDto();
         ArrayList<WeekHours> weekHours = new ArrayList<WeekHours>();
