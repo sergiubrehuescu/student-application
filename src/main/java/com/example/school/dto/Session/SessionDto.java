@@ -13,6 +13,8 @@ import java.time.LocalDate;
 @NoArgsConstructor
 public class SessionDto {
 
+    //todo add the name of the Student
+    //todo mapare explicita
     private Integer idSession;
     private String languageProgramming;
     private Integer duration;
@@ -21,5 +23,4 @@ public class SessionDto {
     private LocalDate localDate;
     private boolean recurrent;
     //todo Si studentul in body
-    //todo profesor
 }

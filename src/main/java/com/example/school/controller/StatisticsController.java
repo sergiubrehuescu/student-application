@@ -67,6 +67,15 @@ public class StatisticsController {
         return statisticsService.studentsStatisticsMonthYear(monthName,year);
     }
 
+    @GetMapping("monthDashboardPaid/{monthName}/{year}")
+    public List<SessionDto> studentsStatisticsDashboardPaid(@PathVariable Month monthName, @PathVariable Year year){
+        return statisticsService.studentsStatisticsMonthYearDashboardPaid(monthName,year);
+    }
+
+    @GetMapping("monthDashboardUnpaid/{monthName}/{year}")
+    public List<SessionDto> studentsStatisticsDashboardUnpaid(@PathVariable Month monthName, @PathVariable Year year){
+        return statisticsService.studentsStatisticsMonthYearDashboardUnpaid(monthName,year);
+    }
     @GetMapping("hours/{monthName}/{year}")
     public StatisticsOverAllDto statisticsOverAll(@PathVariable Month monthName, @PathVariable Year year){
         return statisticsService.statisticsOverAll(monthName,year);

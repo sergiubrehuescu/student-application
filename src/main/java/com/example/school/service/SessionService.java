@@ -67,6 +67,13 @@ public class SessionService {
         return mapper.map(session,SessionDto.class);
     }
 
+    public SessionDto unpaySession(Integer idSession) {
+        Session session = finSessionById(idSession);
+        session.setPaid(false);
+        sessionRepository.save(session);
+        return mapper.map(session,SessionDto.class);
+    }
+
     public List<SessionDto> addSessionsRecurent(Integer studentId, LocalDate localDate, Session session) {
         Student student = studentService.findStudentById(studentId);
 

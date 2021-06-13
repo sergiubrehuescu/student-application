@@ -104,6 +104,8 @@ public class StatisticsService {
         return studentsStatisticsResponseDto;
     }
 
+
+
     public StudentsStatisticsResponseDto studentsStatisticsMonthYear(Month month, Year year) {
         List<Session> sessionList =sessionRepository.findAll();
         int debts=0,payed=0,totalMonthIncome=0;
@@ -123,6 +125,18 @@ public class StatisticsService {
         }
         setPaymentAllStudents(debts, payed, totalMonthIncome, studentsStatisticsResponseDto);
         return studentsStatisticsResponseDto;
+    }
+
+    public List<SessionDto> studentsStatisticsMonthYearDashboardPaid(Month month, Year year) {
+        List<Session> sessionList =sessionRepository.findAll();
+
+        return studentService.studentsPayedTotalMonth(sessionList,month,year);
+    }
+
+    public List<SessionDto> studentsStatisticsMonthYearDashboardUnpaid(Month month, Year year) {
+        List<Session> sessionList =sessionRepository.findAll();
+
+        return studentService.studentsMonthIncomeTotal(sessionList);
     }
 
     private int getPayedSession(SessionDto sessionDto) {

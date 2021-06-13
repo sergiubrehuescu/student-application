@@ -50,6 +50,11 @@ public class SessionController {
         return sessionService.paySession(id);
     }
 
+    @PutMapping("unpay/{id}")
+    public SessionDto unpaySession(@PathVariable @Valid Integer id){
+        return sessionService.unpaySession(id);
+    }
+
     @PutMapping("addRecurent/{studentId}/{localDate}")
     public List<SessionDto> addSessionsRecurent(@PathVariable Integer studentId, @PathVariable @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate localDate, @RequestBody Session session){
         return sessionService.addSessionsRecurent(studentId,localDate,session);

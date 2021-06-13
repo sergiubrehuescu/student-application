@@ -8,7 +8,8 @@ public class LastNameAnnotationImpl implements ConstraintValidator<LastName,Stri
     @Override
     public boolean isValid(String lastName, ConstraintValidatorContext constraintValidatorContext){
 
-        return lastName.length() > 7;
+        //return lastName.length() > 7;
+        return true;
 
     }
 }

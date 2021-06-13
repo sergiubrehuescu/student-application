@@ -8,7 +8,8 @@ public class PhoneNumberAnnotationImpl implements ConstraintValidator<PhoneNumbe
     @Override
     public boolean isValid(String phoneNumber, ConstraintValidatorContext constraintValidatorContext){
 
-        return phoneNumber.startsWith("07") && phoneNumber.length()==10;
+        //return phoneNumber.startsWith("07") && phoneNumber.length()==10;
+        return true;
 
     }
 }

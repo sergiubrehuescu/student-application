@@ -7,6 +7,7 @@ public class MyEmailAnnotationImpl implements ConstraintValidator<MyEmail,String
 
     @Override
     public boolean isValid(String email, ConstraintValidatorContext constraintValidatorContext){
-        return email.contains("@");
+        //return email.contains("@");
+        return true;
     }
 }
