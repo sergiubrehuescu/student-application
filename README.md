@@ -1,5 +1,7 @@
 This repository contains the back-end code done in Spring Boot for a student managemnent application.
 
+Bellow i have attached some samples of the code , but for the whole API and logic please download the repo locally in your machine.
+
 Enjoy,
 Sergiu
 
